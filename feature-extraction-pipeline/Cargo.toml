@@ -1,0 +1,11 @@
+[package]
+name = "OJ-feature-extraction-spike"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+tree-sitter = "0.20"
+tree-sitter-cpp = "0.20"
+tree-sitter-python = "0.20"
+tree-sitter-java = "0.20"
+tree-sitter-c = "0.20"
