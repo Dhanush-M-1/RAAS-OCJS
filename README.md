@@ -8,13 +8,13 @@ Final-year project, Department of Computer Science and Engineering, Easwari Engi
 
 ---
 
-## 1. Problem
+## 01. Problem
 
 Online judges apply identical sandbox isolation and resource limits to every submission regardless of its actual computational profile. A trivial submission and a resource-heavy one cost the platform the same to evaluate. This is absorbable on elastic cloud infrastructure, but not on fixed, self-hosted hardware, where a single heavy submission can degrade response time for every other user in the queue.
 
 RAAS-OJS optimizes the infrastructure layer beneath judging — how a submission is isolated and scheduled while it runs — without touching the problem-specific correctness criteria (time/memory limits set by the problem author) that determine a verdict.
 
-## 2. What This Is
+## 02. What This Is
 
 A judge built from scratch, evaluated under four scheduling strategies against a common execution substrate:
 
@@ -25,7 +25,7 @@ A judge built from scratch, evaluated under four scheduling strategies against a
 | Reactive | During execution | Event-driven cgroup monitoring detects real usage → migrates the running process mid-run |
 | Hybrid | Both | Predictive sets the starting tier, Reactive corrects it live |
 
-## 3. Architecture
+## 03. Architecture
 
 ```
 Submission → tree-sitter parse → Rust feature extraction → XGBoost →
@@ -43,7 +43,7 @@ CodeNet loading/cleaning/sampling, feature-label join, XGBoost training, Treelit
 
 The Baseline strategy skips the classifier and monitor entirely; Predictive skips the monitor; Reactive skips the classifier and assigns a default tier.
 
-## 4. Tech Stack
+## 04. Tech Stack
 
 | Component | Choice | Why |
 |---|---|---|
@@ -56,7 +56,7 @@ The Baseline strategy skips the classifier and monitor entirely; Predictive skip
 
 Languages initially scoped: **C++, Python, Java, C** — ~95% of CodeNet's submission distribution.
 
-## 5. Isolation Design Notes
+## 05. Isolation Design Notes
 
 Two separate limits are kept within each tier's cgroup:
 - **`memory.max`** — hard kill boundary, always fixed at or above the problem's own judging limit. Never a source of false Memory-Limit-Exceeded verdicts caused by the scheduling infrastructure itself.
@@ -66,13 +66,13 @@ This separation exists to prevent the kernel OOM-killer from firing before the r
 
 **Known edge case:** a submission may allocate far more memory upfront than its tier's limit (e.g., heap pre-allocation for speed). Mitigated by: the hard/soft boundary split above, event-driven (not polling) monitoring, and a predictive static check that routes large literal/constant allocations (`malloc(N)`, `new T[N]`, `reserve(N)`) straight to the Heavy tier before execution starts.
 
-## 6. Evaluation Plan
+## 06. Evaluation Plan
 
 Metrics: throughput at varying concurrency, p50/p95/p99 latency, maximum sustainable concurrency, predictive misclassification rate, reactive reclassification overhead, and fairness via Jain's fairness index.
 
 Workloads replayed from IBM Project CodeNet. Two acknowledged threats to validity: CodeNet's labels were recorded on IBM's own execution environment and may not transfer exactly to local hardware; reactive monitoring's own overhead is tracked as a first-class metric rather than assumed free.
 
-## 7. Base Paper & Related Work
+## 07. Base Paper & Related Work
 
 **Base paper:** Song, Han, Guo, Cai (2025), *IDL-LTSOJ*, High-Confidence Computing, Elsevier — solves OJ concurrency via Kafka task distribution; does not address resource prediction, tier adaptation, or reactive correction.
 
@@ -80,31 +80,15 @@ Workloads replayed from IBM Project CodeNet. Two acknowledged threats to validit
 
 No existing system combines predictive and reactive resource-tier classification with true mid-run cgroup migration.
 
-## 8. Team
+## 08. Team
 
 | Person | Responsibility |
-|---|---|
-| Bharath Aashish R | Isolation manager (cgroups/namespaces), migration logic, scheduler core, Hybrid strategy |
-| Dhanush M | tree-sitter + Rust feature extraction, XGBoost training pipeline (on CodeNet) |
-| Hemanthkumar K | Reactive monitor (event-driven cgroup monitoring), benchmarking harness |
-| Iniyaa P | Minimal judge platform (intake, compile/execute, output comparison), dashboard, paper writing |
+| --- | --- |
+| Bharath Aashish R | UI & Code Editor |
+| Dhanush M | XGBoost Model training |
+| Iniyaa P | tree-sitter + feature extraction |
+| Hemanthkumar K | Server + Isolation Manager |
 
-## 9. Build Order
-
-1. Scope final language set (C++, Python, Java, C)
-2. Minimal judge core (intake → compile → execute → compare) — the substrate everything else plugs into
-3. tree-sitter grammars + Rust feature extraction skeleton
-4. Sample and preprocess the CodeNet subset for chosen languages
-5. Implement Baseline strategy first — no ML involved, gives an early control group
-6. Implement isolation manager (cgroups v2, `memory.max`/`memory.high` split, migration logic) — before Reactive/Predictive, since both depend on it
-7. Train XGBoost on extracted features + CodeNet labels; export via Treelite
-8. Implement Predictive, Reactive, then Hybrid strategies
-9. Run the four-strategy comparison against the metrics in Section 6
-
-## 10. Status
-
-Architecture and paper draft complete. Targeting IEEE INDICON 2026 (submission deadline August 31, 2026); implementation and empirical results in progress — the submitted paper presents the evaluation methodology and a representative execution walkthrough rather than final numbers, consistent with a prototype-validation reporting style.
-
-## 11. License
+## 09. License
 
 TBD.
