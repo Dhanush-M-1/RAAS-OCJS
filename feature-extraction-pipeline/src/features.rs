@@ -1126,4 +1126,124 @@ mod tests {
         assert!(!f.parse_error_flag);
         assert_eq!(f.error_node_count, 0);
     }
+
+    // ---- additional edge cases (documented metric definitions) -------------
+
+    #[test]
+    fn c_do_while_adds_no_depth_or_complexity() {
+        // `do { } while (...)` parses as `do_statement`, which is not in the
+        // counted set (only if/for/while are). Lock in that behavior.
+        let f = feats(
+            r#"
+            int f(int x) {
+                do { x--; } while (x > 0);
+                return x;
+            }
+            "#,
+            Language::C,
+        );
+        assert_eq!(f.nesting_depth, 0, "do/while is not a counted construct");
+        assert_eq!(f.cyclomatic_complexity, 1);
+    }
+
+    #[test]
+    fn c_switch_inside_loop_adds_complexity_not_depth() {
+        let f = feats(
+            r#"
+            int f(int n) {
+                for (int i = 0; i < n; i++) {
+                    switch (i) {
+                        case 0: return 1;
+                        case 1: return 2;
+                        default: break;
+                    }
+                }
+                return 0;
+            }
+            "#,
+            Language::C,
+        );
+        assert_eq!(f.nesting_depth, 1, "switch is not a nesting construct");
+        assert_eq!(f.cyclomatic_complexity, 1 + 1 + 3, "for + 3 case labels");
+    }
+
+    #[test]
+    fn cpp_range_for_is_not_counted_as_nesting() {
+        // Range-based for parses as `range_based_for_statement`, which is not
+        // in the counted node set. This documents current behavior.
+        let f = feats(
+            r#"
+            #include <vector>
+            int f() {
+                std::vector<int> v;
+                int total = 0;
+                for (int x : v) {
+                    total += x;
+                }
+                return total;
+            }
+            "#,
+            Language::Cpp,
+        );
+        assert_eq!(f.nesting_depth, 0);
+        assert_eq!(f.cyclomatic_complexity, 1);
+    }
+
+    #[test]
+    fn java_deep_nesting() {
+        let f = feats(
+            r#"
+            class F {
+                int f(int a, int b, int c) {
+                    for (int i = 0; i < a; i++) {
+                        for (int j = 0; j < b; j++) {
+                            if (i + j < c) {
+                                c--;
+                            }
+                        }
+                    }
+                    return c;
+                }
+            }
+            "#,
+            Language::Java,
+        );
+        assert_eq!(f.nesting_depth, 3);
+        assert_eq!(f.cyclomatic_complexity, 4, "for + for + if => 1 + 3");
+    }
+
+    #[test]
+    fn py_try_except_adds_no_depth() {
+        let f = feats(
+            r#"
+            def f(x):
+                try:
+                    if x > 0:
+                        return 1
+                except Exception:
+                    return 2
+            "#,
+            Language::Python,
+        );
+        assert_eq!(f.nesting_depth, 1, "try/except is not counted");
+        assert_eq!(f.cyclomatic_complexity, 2, "only the inner if is a decision");
+    }
+
+    #[test]
+    fn c_variable_sized_new_array_not_flagged() {
+        let f = feats(
+            r#"
+            #include <stdlib.h>
+            int main() {
+                int n = 5;
+                int *a = malloc(2000000 * sizeof(int));
+                return 0;
+            }
+            "#,
+            Language::C,
+        );
+        // `2000000 * sizeof(int)` is not fully static (sizeof is not handled),
+        // so it is never flagged. Documented limitation.
+        assert!(!f.large_alloc_flag);
+    }
 }

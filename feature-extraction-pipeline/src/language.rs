@@ -64,3 +64,51 @@ impl fmt::Display for Language {
         f.write_str(self.as_str())
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const ALL: [Language; 4] = [Language::C, Language::Cpp, Language::Java, Language::Python];
+
+    #[test]
+    fn folder_names_map_to_languages() {
+        assert_eq!(Language::from_folder_name("C"), Some(Language::C));
+        assert_eq!(Language::from_folder_name("C++"), Some(Language::Cpp));
+        assert_eq!(Language::from_folder_name("Java"), Some(Language::Java));
+        assert_eq!(Language::from_folder_name("Python"), Some(Language::Python));
+        assert_eq!(Language::from_folder_name("Rust"), None);
+        assert_eq!(Language::from_folder_name("c"), None, "matching is case-sensitive");
+        assert_eq!(Language::from_folder_name(""), None);
+    }
+
+    #[test]
+    fn as_str_round_trips_through_folder_name() {
+        for lang in ALL {
+            assert_eq!(Language::from_folder_name(lang.as_str()), Some(lang));
+        }
+    }
+
+    #[test]
+    fn expected_extensions() {
+        assert_eq!(Language::C.expected_extension(), "c");
+        assert_eq!(Language::Cpp.expected_extension(), "cpp");
+        assert_eq!(Language::Java.expected_extension(), "java");
+        assert_eq!(Language::Python.expected_extension(), "py");
+    }
+
+    #[test]
+    fn display_matches_as_str() {
+        for lang in ALL {
+            assert_eq!(lang.to_string(), lang.as_str());
+        }
+    }
+
+    #[test]
+    fn tree_sitter_grammars_load_without_panicking() {
+        // Every grammar must be a compile-time constant that loads cleanly.
+        for lang in ALL {
+            let _ = lang.tree_sitter_language();
+        }
+    }
+}

@@ -3,6 +3,14 @@ name = "OJ-feature-extraction-spike"
 version = "0.1.0"
 edition = "2024"
 
+[lib]
+name = "feature_extraction"
+path = "src/lib.rs"
+
+[[bin]]
+name = "OJ-feature-extraction-spike"
+path = "src/main.rs"
+
 [dependencies]
 tree-sitter = "0.20"
 tree-sitter-cpp = "0.20"

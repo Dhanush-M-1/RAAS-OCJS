@@ -146,9 +146,30 @@ hex and underscore-separated literals.
 cargo test
 ```
 
-Unit tests live inline in [`features.rs`](src/features.rs) and verify the
-per-language feature logic (nesting depth, complexity, recursion, large
-allocations) against hand-written snippets.
+Two layers of tests run against mock source code:
+
+- **Unit tests** (inline `#[cfg(test)]` modules):
+  - [`features.rs`](src/features.rs) — per-language feature logic (nesting
+    depth, complexity, recursion, large allocations) against hand-written
+    snippets, including documented edge cases (`do-while`, range-`for`,
+    `try/except`, variable-sized allocs).
+  - [`walker.rs`](src/walker.rs) — dataset walking against a mock directory
+    tree created in a temp dir (order determinism, skipping non-language /
+    non-tier dirs, extension-mismatch tolerance).
+  - [`language.rs`](src/language.rs) — folder-name mapping, extensions,
+    grammar loading.
+  - [`output.rs`](src/output.rs) — CSV escaping, header/row serialization,
+    row assembly + dedup.
+
+- **Integration tests** ([`tests/`](tests)):
+  - [`tests/pipeline.rs`](tests/pipeline.rs) — end-to-end: writes a mock
+    CodeNet-style dataset to a temp dir, runs walker → feature extraction →
+    row assembly → CSV, and asserts hand-computed values per row, dedup, and
+    parse-error handling.
+  - [`tests/cli.rs`](tests/cli.rs) — black-box: runs the compiled CLI binary
+    against a mock dataset and checks the CSV it writes plus its summary.
+  - [`tests/common/mod.rs`](tests/common/mod.rs) — shared temp-dir / file
+    writer helpers (no external dev-dependencies).
 
 ## Project layout
 
@@ -156,11 +177,17 @@ allocations) against hand-written snippets.
 feature-extraction-pipeline/
 ├── Cargo.toml
 ├── Cargo.lock
-└── src/
-    ├── main.rs      # CLI entry point, CSV writing, summary
-    ├── walker.rs    # dataset directory walking
-    ├── language.rs  # language abstraction + parser selection
-    ├── features.rs  # pure feature-extraction logic (+ tests)
-    └── bin/
-        └── probe.rs # dev tool: dump tree-sitter parse trees
+├── src/
+│   ├── lib.rs       # library crate: re-exports the pipeline modules
+│   ├── main.rs      # CLI entry point (thin wrapper over the library)
+│   ├── output.rs    # row assembly (dedup + features) and CSV writing (+ tests)
+│   ├── walker.rs    # dataset directory walking (+ tests)
+│   ├── language.rs  # language abstraction + parser selection (+ tests)
+│   ├── features.rs  # pure feature-extraction logic (+ tests)
+│   └── bin/
+│       └── probe.rs # dev tool: dump tree-sitter parse trees
+└── tests/
+    ├── common/mod.rs # shared mock-dataset helpers
+    ├── pipeline.rs   # end-to-end integration tests (mock dataset)
+    └── cli.rs        # black-box CLI integration tests
 ```
