@@ -278,10 +278,17 @@ fn c_like_function_name(fn_node: Node, bytes: &[u8]) -> Option<String> {
 }
 
 /// Walk through declarator wrappers down to the base identifier.
+///
+/// Accepts both `identifier` (free functions, and method names that happen to
+/// parse as plain identifiers) and `field_identifier` (in-class C++ methods:
+/// the tree-sitter-cpp grammar names `void rec(int n) {}` inside a class with
+/// a `field_identifier`, not an `identifier`). Without this, in-class method
+/// names were never extracted, so a method calling itself by bare name was
+/// never flagged as recursive.
 fn base_identifier(mut node: Node) -> Option<Node> {
     loop {
         match node.kind() {
-            "identifier" => return Some(node),
+            "identifier" | "field_identifier" => return Some(node),
             "pointer_declarator" | "parenthesized_declarator" | "reference_declarator" => {
                 node = node.named_child(0)?;
             }
@@ -859,6 +866,29 @@ mod tests {
             Language::Cpp,
         );
         assert!(f.large_alloc_flag, "reserve(2M) and new int[3M] both large");
+    }
+
+    #[test]
+    fn cpp_in_class_method_bare_self_call_is_detected() {
+        // In-class C++ methods are named with a `field_identifier` in the
+        // tree-sitter-cpp tree, which `base_identifier` previously ignored —
+        // so a method calling ITSELF by bare name was never flagged. With the
+        // fix, the method name is extracted and the bare self-call is seen.
+        let f = feats(
+            r#"
+            class Node {
+            public:
+                void rec(int n) {
+                    if (n <= 0) return;
+                    rec(n - 1);
+                }
+            };
+            "#,
+            Language::Cpp,
+        );
+        assert!(f.is_recursive, "bare self-call inside an in-class method");
+        assert_eq!(f.nesting_depth, 1);
+        assert_eq!(f.cyclomatic_complexity, 2);
     }
 
     // ---- Java --------------------------------------------------------------
