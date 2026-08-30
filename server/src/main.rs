@@ -4,10 +4,9 @@ mod policy;
 mod queue;
 
 use axum::{Json, Router, routing::post};
-use models::{CaseResult, JudgeResult, Submission, TestCase, TierPolicy};
-use queue::submit;
-
-use crate::queue::start;
+use models::{CaseResult, JudgeResult, Submission, TestCase};
+use policy::TierPolicy;
+use queue::{start, submit};
 
 async fn judge(submission: Submission, policy: &(dyn TierPolicy + Send + Sync)) -> JudgeResult {
     JudgeResult {
