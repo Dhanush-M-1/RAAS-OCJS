@@ -1,0 +1,7 @@
+z=lambda:sum(map(int,input().split()))
+z()
+x=z()
+b=z()
+c=z()
+print(x-b)
+print(b-c)

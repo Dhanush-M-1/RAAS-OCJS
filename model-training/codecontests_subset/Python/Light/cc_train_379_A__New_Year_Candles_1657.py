@@ -1,0 +1,9 @@
+n,m=map(int,input().split())
+sum=0
+a=n
+while(1):
+    sum=sum+n//m
+    n=n//m+(n%m)
+    if(n<m):
+        break
+print(int(sum+a))

@@ -1,0 +1,5 @@
+input()
+m=lambda:sum(map(int,input().split()))
+a,b,c=(m()for _ in ' '*3)
+print(a-b)
+print(b-c)

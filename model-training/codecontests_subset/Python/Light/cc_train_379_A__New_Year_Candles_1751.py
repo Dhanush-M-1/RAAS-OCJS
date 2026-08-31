@@ -1,0 +1,10 @@
+a,b=map(int,input().split())
+i=1 
+h=0
+while(a>0):
+    a=a-1
+    if(i%b==0):
+        a=a+1 
+    i=i+1
+    h=h+1
+print(h)

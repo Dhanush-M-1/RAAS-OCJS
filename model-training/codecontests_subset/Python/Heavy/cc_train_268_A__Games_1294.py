@@ -1,0 +1,41 @@
+x=int(input())
+s=1
+l=[]
+suml=0
+while(s<=x):
+    a,b=map(int,input().split())
+    l.append(a)
+    l.append(b)
+    s+=1
+e=0
+lent=(x*2)-1
+d=lent
+while(d>2):
+    z=3
+    while(lent>2):
+        if(lent-z>=0):
+            if(l[lent-z]==l[d]):
+                suml+=1
+                z+=2
+            else:
+                z+=2    
+        else:
+            lent-=2
+            break
+    d-=2
+b=len(l)-2
+lentt=(len(l))-2
+while(b>1):
+    n=1
+    while(lentt>1):
+        if(lentt-n>=0):
+            if(l[lentt-n]==l[b]):
+                suml+=1
+                n+=2
+            else:
+                n+=2    
+        else:
+            lentt-=2
+            break
+    b-=2
+print(suml)            

@@ -1,0 +1,60 @@
+#include <bits/stdc++.h>
+using namespace std;
+const int N = 3e5 + 5, inf = 1e9;
+int n, kk, s, x, k[N][2];
+char ch[N];
+int fa[N << 1], val[N << 1];
+int find(int u) { return fa[u] == u ? fa[u] : fa[u] = find(fa[u]); }
+void uni(int a, int b) {
+  if (a == b) return;
+  val[b] += val[a];
+  fa[a] = b;
+}
+int mix(int a) { return min(val[find(a)], val[find(a + kk)]); };
+int main() {
+  scanf("%d%d%s", &n, &kk, ch + 1);
+  for (int i = 1; i <= kk; i++) {
+    scanf("%d", &s);
+    while (s--) {
+      scanf("%d", &x);
+      k[x][bool(k[x][0])] = i;
+    }
+  }
+  for (int i = 1; i <= kk; i++) val[i] = 1, fa[i] = i, fa[i + kk] = i + kk;
+  fa[kk + kk + 1] = kk + kk + 1;
+  val[kk + kk + 1] = inf;
+  int ans = 0;
+  for (int i = 1; i <= n; i++) {
+    if (k[i][0] == 0) goto qwq;
+    if (ch[i] == '1') {
+      if (k[i][1]) {
+        if (find(k[i][0]) == find(k[i][1])) goto qwq;
+        ans -= min(val[find(k[i][1])], val[find(k[i][1] + kk)]);
+        ans -= min(val[find(k[i][0])], val[find(k[i][0] + kk)]);
+        uni(find(k[i][0]), find(k[i][1])),
+            uni(find(k[i][0] + kk), find(k[i][1] + kk));
+        ans += min(val[find(k[i][1])], val[find(k[i][1] + kk)]);
+      } else {
+        ans -= min(val[find(k[i][0])], val[find(k[i][0] + kk)]);
+        uni(find(k[i][0]), find(kk + kk + 1));
+        ans += val[find(k[i][0] + kk)];
+      }
+    } else {
+      if (k[i][1]) {
+        if (find(k[i][0]) == find(k[i][1] + kk)) goto qwq;
+        ans -= min(val[find(k[i][1])], val[find(k[i][1] + kk)]);
+        ans -= min(val[find(k[i][0])], val[find(k[i][0] + kk)]);
+        uni(find(k[i][0]), find(k[i][1] + kk)),
+            uni(find(k[i][1]), find(k[i][0] + kk));
+        ans += min(val[find(k[i][1] + kk)], val[find(k[i][0] + kk)]);
+      } else {
+        ans -= min(val[find(k[i][0])], val[find(k[i][0] + kk)]);
+        uni(find(k[i][0] + kk), find(kk + kk + 1));
+        ans += val[find(k[i][0])];
+      }
+    }
+  qwq:
+    printf("%d\n", ans);
+  }
+  return 0;
+}

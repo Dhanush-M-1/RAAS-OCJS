@@ -1,0 +1,5 @@
+int(input())
+s1 = sum(map(int, input().split()))
+s2 = sum(map(int, input().split()))
+s3 = sum(map(int, input().split()))
+print(s1-s2, s2-s3, sep = '\n')

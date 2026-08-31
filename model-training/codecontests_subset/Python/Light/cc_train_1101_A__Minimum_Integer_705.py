@@ -1,0 +1,13 @@
+q=int(input())
+for i in range(q):
+    l,r,d=map(int,input().split())
+    if(l>d):
+        print(d)
+    else:
+        if(r/d==1):
+            print(r+d)
+        elif(r/d<1):
+            print(d)
+        elif(r/d>1):
+            print((r//d+1)*d)
+        

@@ -1,0 +1,8 @@
+t=int(input())
+a=map(int,input().split())
+b=map(int,input().split())
+c=map(int,input().split())
+x=(sum(a))
+y=(sum(b))
+z=(sum(c))
+print(x-y,y-z)

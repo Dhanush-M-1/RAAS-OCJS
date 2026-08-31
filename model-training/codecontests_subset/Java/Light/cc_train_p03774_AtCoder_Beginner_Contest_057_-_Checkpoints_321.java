@@ -1,0 +1,29 @@
+import java.awt.Point;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Scanner;
+
+public class Main{
+	
+	static final Scanner s=new Scanner(System.in);
+	
+	public static void main(String[] __){
+		int n=s.nextInt(),m=s.nextInt();
+		Point[] students=new Point[n];
+		CheckPoint[] cps=new CheckPoint[m];
+		for(int i=0;i<n;i++)
+			students[i]=new Point(s.nextInt(),s.nextInt());
+		for(int i=0;i<m;i++)
+			cps[i]=new CheckPoint(i+1,s.nextInt(),s.nextInt());
+		for(Point st:students)
+			System.out.println(Arrays.stream(cps).min(
+					Comparator.comparingInt(o->Math.abs(o.x-st.x)+Math.abs(o.y-st.y))).get().id);
+	}
+}
+class CheckPoint extends Point{
+	int id;
+	CheckPoint(int id,int x,int y){
+		super(x,y);
+		this.id=id;
+	}
+}

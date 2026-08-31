@@ -1,0 +1,60 @@
+import java.io.*;
+import java.util.*;
+
+
+public class Main {
+
+	private static Scanner sc;
+	private static Printer pr;
+
+	private static void solve() {
+		int n = sc.nextInt();
+		int m = sc.nextInt();
+
+		int[] a = new int[n];
+		int[] b = new int[n];
+		for (int i = 0; i < n; i++) {
+			a[i] = sc.nextInt();
+			b[i] = sc.nextInt();
+		}
+
+		int[] c = new int[m];
+		int[] d = new int[m];
+		for (int i = 0; i < m; i++) {
+			c[i] = sc.nextInt();
+			d[i] = sc.nextInt();
+		}
+
+		for (int i = 0; i < n; i++) {
+			int min = Integer.MAX_VALUE;
+			int t = 0;
+			for (int j = 0; j < m; j++) {
+				int dd = Math.abs(c[j] - a[i]) + Math.abs(d[j] - b[i]);
+
+				if (dd < min) {
+					min = dd;
+					t = j;
+				}
+			}
+
+			pr.println(t + 1);
+		}
+	}
+
+	// ---------------------------------------------------
+	public static void main(String[] args) {
+		sc = new Scanner(System.in);
+		pr = new Printer(System.out);
+
+		solve();
+
+		pr.close();
+		sc.close();
+	}
+
+	private static class Printer extends PrintWriter {
+		Printer(PrintStream out) {
+			super(out);
+		}
+	}
+}

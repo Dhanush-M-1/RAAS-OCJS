@@ -1,0 +1,14 @@
+a,b=input().split()
+a=int(a)
+b=int(b)
+m=1
+co=0
+co=co+a
+while(m):
+    if(a<b):
+        m=0
+    co=co+(a//b)
+    x=a%b
+    a=a//b
+    a=a+x
+print(co)

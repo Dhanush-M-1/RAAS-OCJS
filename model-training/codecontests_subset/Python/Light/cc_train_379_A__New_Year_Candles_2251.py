@@ -1,0 +1,9 @@
+a,b=map(int,input().split())
+count=0
+count+=a
+while(a//b>0):
+	n=a//b
+	c=a%b
+	count+=n
+	a=n+c
+print(count)

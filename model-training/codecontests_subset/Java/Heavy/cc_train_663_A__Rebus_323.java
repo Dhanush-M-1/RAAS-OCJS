@@ -1,0 +1,97 @@
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Arrays;
+
+public class CF2_347B {
+  
+  static Reader sc = new Reader();
+  static PrintWriter out = new PrintWriter(System.out);
+  
+  public static void main(String[] args) throws IOException {
+    String[] words = sc.nextLine().split(" ");
+    int n = Integer.parseInt(words[words.length - 1]);
+    int count = (words.length - 1) / 2;
+    int[] nums = new int[count];
+    boolean[] neg = new boolean[count];
+    
+    for (int i = 1; i < count; i++) {
+      if (words[i * 2 - 1].charAt(0) != '+') {
+        neg[i] = true;
+      }
+    }
+    
+    int sum = 0;
+    for (int i = 0; i < count; i++) {
+      nums[i] = 1;
+      sum += neg[i] ? - nums[i] : +nums[i];
+    }
+    
+    int maxed = 0;
+    
+    
+    if (sum < n) {
+      for (int i = 0; i < count; i++) {
+        if (!neg[i]) {
+          int canAdd = Math.min(n - sum, n - nums[i]);
+          nums[i] += canAdd;
+          sum += canAdd;
+        }
+      }
+    } else if (sum > n) {
+      for (int i = 0; i < count; i++) {
+        if (neg[i]) {
+          int canSub = Math.min(sum - n, n - nums[i]);
+          nums[i] += canSub;
+          sum -= canSub;
+        }
+      }
+    }
+    
+    if (sum == n) {
+      out.println("Possible");
+      for (int i = 0; i < count; i++) {
+        if (i != 0) {
+          if (neg[i]) {
+            out.print("- ");
+          } else {
+            out.print("+ ");
+          }
+        }
+        out.print(nums[i] + " ");
+      }
+      
+      out.println("= " + n);
+    } else {
+      out.println("Impossible");
+    }
+    
+    
+    out.close();
+  }
+  
+  
+  
+  static class Reader {
+    boolean consume = false; final private int BUFFER_SIZE = 1 << 12;private byte[] buffer;private int bufferPointer, bytesRead;private boolean reachedEnd = false;public Reader() {buffer = new byte[BUFFER_SIZE];bufferPointer = 0;bytesRead = 0;}
+    public boolean hasNext() {return !reachedEnd;} private void fillBuffer() throws IOException {bytesRead = System.in.read(buffer, bufferPointer = 0, BUFFER_SIZE);if (bytesRead == -1) {buffer[0] = -1;reachedEnd = true;}}
+    private void consumeSpaces() throws IOException {while (read() <= ' ' && reachedEnd == false);bufferPointer--;} private byte read() throws IOException {if (bufferPointer == bytesRead) {fillBuffer();}return buffer[bufferPointer++];}
+    public String next() throws IOException {StringBuilder sb = new StringBuilder();consumeSpaces();byte c = read();do {sb.append((char) c);} while ((c = read()) > ' ');if (consume) {consumeSpaces();};if (sb.length() == 0) {return null;}return sb.toString();}
+    public String nextLine() throws IOException {StringBuilder sb = new StringBuilder();byte c;boolean read = false;while ((c = read()) != -1) {if (c == '\n') {read = true;break;}if (c >= ' ')sb.append((char) c);}if (!read) {return null;}return sb.toString();}
+    public int nextInt() throws IOException {consumeSpaces();int ret = 0;      byte c = read();boolean neg = (c == '-');if (neg) {c = read();}do {ret = ret * 10 + c - '0';} while ((c = read()) >= '0' && c <= '9');if (consume) {consumeSpaces();}if (neg) {return -ret;}return ret;}
+    public long nextLong() throws IOException {consumeSpaces();long ret = 0;byte c = read();boolean neg = (c == '-');if (neg) {c = read();}do {ret = ret * 10L + c - '0';} while ((c = read()) >= '0' && c <= '9');if (consume) {consumeSpaces();}if (neg) {return -ret;}return ret;}
+    public double nextDouble() throws IOException {consumeSpaces();double ret = 0;double div = 1;byte c = read();boolean neg = (c == '-');if (neg) {c = read();}do {ret = ret * 10 + c - '0';} while ((c = read()) >= '0' && c <= '9');if (c == '.') {while ((c = read()) >= '0' && c <= '9') {ret += (c - '0') / (div *= 10);}}if (consume) {consumeSpaces();}if (neg) {return -ret;}return ret;}    public int[] nextIntArray(int n) throws IOException {int[] a = new int[n];for (int i = 0; i < n; i++) {a[i] = nextInt();}return a;}
+    public int[][] nextIntMatrix(int n, int m) throws IOException {int[][] grid = new int[n][m];for (int i = 0; i < n; i++) {grid[i] = nextIntArray(m);}return grid;}
+    public char[][] nextCharacterMatrix(int n) throws IOException {char[][] a = new char[n][];for (int i = 0; i < n; i++) {a[i] = next().toCharArray();}return a;}
+    public void close() throws IOException {if (System.in == null) {return;} else {System.in.close();}}
+  }
+  
+  static void print(int[] A) {for (int i = 0; i < A.length; i++) {if (i != 0) {out.print(' ');}out.print(A[i]);}out.println();}
+  static <T> void print(Iterable<T> A) {int i = 0;for (T act : A) {if (i != 0) {out.print(' ');}out.print(act);i++;}out.println();}
+  static void printPlus1(Iterable<Number> A) {int i = 0;for (Number act : A) {if (i != 0) {out.print(' ');}out.print(act.longValue() + 1L);i++;}out.println();  }
+  static void debug(Object... o) {System.err.println(Arrays.deepToString(o));}
+  
+  /*
+  long s = System.currentTimeMillis();
+  debug(System.currentTimeMillis() - s + "ms");
+   */
+}

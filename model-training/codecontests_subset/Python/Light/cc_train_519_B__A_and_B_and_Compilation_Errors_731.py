@@ -1,0 +1,1 @@
+a,b,c,d=input(),sum(map(int,input().split())),sum(map(int,input().split())),sum(map(int,input().split()));print(str(b-c)+'\n'+str(c-d))

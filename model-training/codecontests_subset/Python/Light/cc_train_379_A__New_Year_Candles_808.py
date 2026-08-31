@@ -1,0 +1,8 @@
+a,b = list(map(int,input().split()))
+
+h = a
+while(int(a/b) >= 1):
+	h = h+int(a/b)
+	a = int(a/b)+a%b
+
+print(h)

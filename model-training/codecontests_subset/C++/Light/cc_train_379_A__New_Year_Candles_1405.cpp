@@ -1,0 +1,7 @@
+#include <bits/stdc++.h>
+int a, b;
+int main() {
+  std::cin >> a >> b;
+  std::cout << (a * b - 1) / (b - 1);
+  return 0;
+}

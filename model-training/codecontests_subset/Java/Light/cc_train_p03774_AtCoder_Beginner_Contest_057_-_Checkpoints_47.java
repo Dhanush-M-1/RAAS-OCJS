@@ -1,0 +1,43 @@
+
+import java.util.Scanner;
+
+public class Main {
+
+    private static Scanner scan = new Scanner(System.in);
+
+    public static void main(String[] args) {
+	int N = Integer.parseInt(scan.next());
+	int M = Integer.parseInt(scan.next());
+
+	int[] a = new int[N];
+	int[] b = new int[N];
+	int[] min = new int[N];
+	for (int i = 0; i < N; i++) {
+	    a[i] = Integer.parseInt(scan.next());
+	    b[i] = Integer.parseInt(scan.next());
+	    min[i] = Integer.MAX_VALUE;
+	}
+
+	int[] dest = new int[N];
+	for (int j = 0; j < M; j++) {
+	    int c = Integer.parseInt(scan.next());
+	    int d = Integer.parseInt(scan.next());
+	    for (int i = 0; i < N; i++) {
+		int dis = distance(a[i], b[i], c, d);
+		if(dis < min[i]) {
+		    min[i] = dis;
+		    dest[i] = j+1;
+		}
+	    }
+	}
+
+	for (int i = 0; i < N; i++) {
+	    System.out.println(dest[i]);
+	}
+	scan.close();
+    }
+
+    private static int distance(int x1, int y1, int x2, int y2) {
+	return Math.abs(x1-x2) + Math.abs(y1-y2);
+    }
+}

@@ -1,0 +1,9 @@
+#include <bits/stdc++.h>
+int main() {
+  int n, x, y, ans;
+  scanf("%d%d%d", &n, &x, &y);
+  ans = (n * y + 99) / 100 - x;
+  if (ans < 0) ans = 0;
+  printf("%d\n", ans);
+  return 0;
+}

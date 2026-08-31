@@ -1,0 +1,8 @@
+n = int(input())
+a = list(map(int, input().split()))
+b = list(map(int, input().split()))
+c = list(map(int, input().split()))
+miss1 = sum(a) - sum(b)
+miss2 = sum(b) - sum(c)
+print(miss1)
+print(miss2)

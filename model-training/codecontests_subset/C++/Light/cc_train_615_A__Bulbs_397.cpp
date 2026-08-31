@@ -1,0 +1,10 @@
+#include <bits/stdc++.h>
+int main() {
+  int n, x, a;
+  std::cin >> n >> n;
+  std::set<int> S;
+  for (; std::cin >> x;)
+    for (; x-- && std::cin >> a; S.insert(a))
+      ;
+  std::cout << (S.size() < n ? "NO" : "YES");
+}

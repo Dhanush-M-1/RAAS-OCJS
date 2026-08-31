@@ -1,0 +1,70 @@
+#include <bits/stdc++.h>
+using namespace std;
+vector<vector<int> > adj(200001);
+int c[200001], mex[200001], h[200001], b[200001];
+void DFS(int i) {
+  if (mex[i] >= 0) {
+    return;
+  }
+  vector<int> v;
+  for (int j : adj[i]) {
+    DFS(j);
+    v.push_back(mex[j]);
+  }
+  for (int x : v) {
+    c[x] = i;
+  }
+  int &k = mex[i];
+  for (k = 0; c[k] == i; ++k)
+    ;
+}
+int main() {
+  int n, m;
+  scanf("%d%d", &n, &m);
+  for (int i = 1; i <= n; ++i) {
+    scanf("%d", &h[i]);
+  }
+  while (m--) {
+    int i, j;
+    scanf("%d%d", &i, &j);
+    adj[i].push_back(j);
+  }
+  for (int i = 1; i <= n; ++i) {
+    mex[i] = -1;
+  }
+  for (int i = 1; i <= n; ++i) {
+    DFS(i);
+  }
+  for (int i = 1; i <= n; ++i) {
+    b[mex[i]] ^= h[i];
+  }
+  int root = 0;
+  mex[root] = -1;
+  for (int i = 1; i <= n; ++i) {
+    if (mex[i] > mex[root] && ((b[mex[i]] ^ h[i]) < h[i])) {
+      root = i;
+    }
+  }
+  bool win = false;
+  for (int i = 0; i <= mex[root] && !win; ++i) {
+    win = (b[i] != 0);
+  }
+  if (!win) {
+    printf("LOSE\n");
+    return 0;
+  }
+  c[mex[root]] = root;
+  for (int j : adj[root]) {
+    c[mex[j]] = j;
+  }
+  for (int i = 0; i <= mex[root]; ++i) {
+    int j = c[i];
+    h[j] ^= b[i];
+  }
+  printf("WIN\n");
+  for (int i = 1; i <= n; ++i) {
+    printf("%d ", h[i]);
+  }
+  printf("\n");
+  return 0;
+}

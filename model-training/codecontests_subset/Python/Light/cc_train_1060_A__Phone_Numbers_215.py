@@ -1,0 +1,1 @@
+n=int(input());m=input();a=m.count('8');k=n//11;print(min(a,k))

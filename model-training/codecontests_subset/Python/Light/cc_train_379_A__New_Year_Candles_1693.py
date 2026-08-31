@@ -1,0 +1,11 @@
+a,b=map(int,input().split())
+count=0
+pog=0
+while(a>0):
+    count=count+1
+    a=a-1
+    pog=pog+1
+    if(pog==b):
+        pog=0
+        a=a+1
+print(count)

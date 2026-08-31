@@ -1,0 +1,6 @@
+a=int(input())
+s=str(input())
+l=list(s)
+k=l.count('8')
+m=min(int(a/11),k)
+print(m)

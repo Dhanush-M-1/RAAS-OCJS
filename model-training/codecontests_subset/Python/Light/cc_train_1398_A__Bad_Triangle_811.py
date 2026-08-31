@@ -1,0 +1,1 @@
+[(lambda N,n:print('1 2 %d'%N if n[0]+n[1]<=n[N-1]else-1))(int(input()),list(map(int,input().split())))for t in range(int(input()))]

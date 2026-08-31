@@ -1,0 +1,10 @@
+t=int(input())
+while(t):
+    l,r,d=map(int,input().split())
+    if(l>d):
+        print(d)
+    else:
+        ans=r+d
+        ans1=ans//d
+        print(ans1*d)
+    t=t-1

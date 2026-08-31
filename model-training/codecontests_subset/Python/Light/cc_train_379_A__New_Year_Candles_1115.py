@@ -1,0 +1,10 @@
+a,b=map(int,input().split())
+total=a
+while((a//b)!=0):
+    if(a%b==0):
+        total+=a//b
+        a=a//b
+    else:
+        total+=a//b
+        a=(a//b)+(a%b)
+print(total)

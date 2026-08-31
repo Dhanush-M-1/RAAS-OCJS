@@ -1,0 +1,118 @@
+/*
+ *
+ * @author Mukesh Singh
+ *
+ */
+
+import java.io.*;
+import java.util.*;
+import java.text.DecimalFormat;
+@SuppressWarnings("unchecked")
+public class AB {	
+	//solve test cases
+	void solve() throws Exception {
+		int n = in.nextInt(); int a[] = new int[n]; int b[] = new int[n-1]; int c[] = new int[n-2];
+		for(int i = 0 ; i  <n ; ++i ) {
+			int num = in.nextInt();
+			a[i] = num ;
+		}
+		for(int i = 0 ; i  <n-1 ; ++i ) {
+			int num = in.nextInt();
+			b[i] = num ;
+		}
+		for(int i = 0 ; i  <n-2 ; ++i ) {
+			c[i] = in.nextInt();
+		}
+		Arrays.sort(a);Arrays.sort(b);Arrays.sort(c);
+		int ans1 = -1 ; int ans2 = -1 ;
+		for(int i = 0 ; i < n-1 ; ++i ){
+			if(a[i]!= b[i]) {
+				ans1 = a[i] ; break ;
+			}
+		}
+		if(ans1== -1) ans1 = a[n-1] ;
+		for(int i = 0 ; i < n-2 ; ++i ){
+			if(c[i]!= b[i]) {
+				ans2 = b[i] ; break ;
+			}
+		}
+		if(ans2== -1) ans2 = b[n-2] ;
+		System.out.println(ans1);
+		System.out.println(ans2);
+	}
+	
+	//@ main function
+	public static void main(String[] args) throws Exception {
+		new AB();
+	}
+	
+	InputReader in;
+	PrintStream out ;
+	DecimalFormat df ;
+	AB() {
+		try {
+			File defaultInput = new File("file.in");
+			if (defaultInput.exists()) 
+				in = new InputReader("file.in");
+			else 
+				in = new InputReader();
+			defaultInput = new File("file.out");
+			if (defaultInput.exists()) 
+				out = new PrintStream(new FileOutputStream("file.out"));
+			else
+				out = new PrintStream(System.out);
+			df = new DecimalFormat("######0.00");
+			solve();
+			out.close();
+		} 
+		catch (Exception e) {
+			e.printStackTrace();
+			System.exit(261);
+		}
+	}
+	
+	class InputReader {
+		BufferedReader reader;
+		StringTokenizer tokenizer;
+		
+		InputReader() {
+			reader = new BufferedReader(new InputStreamReader(System.in));
+		}
+		
+		InputReader(String fileName) throws FileNotFoundException {
+			reader = new BufferedReader(new FileReader(new File(fileName)));
+		}
+		
+		String readLine() throws IOException {
+			return reader.readLine();
+		}
+		
+		String nextToken() throws IOException {
+			while (tokenizer == null || !tokenizer.hasMoreTokens())
+				tokenizer = new StringTokenizer(readLine());
+			return tokenizer.nextToken();
+		}
+		
+		boolean hasMoreTokens() throws IOException {
+			while (tokenizer == null || !tokenizer.hasMoreTokens()) {
+				String s = readLine();
+				if (s == null)
+					return false;
+				tokenizer = new StringTokenizer(s);
+			}
+			return true;
+		}
+		
+		int nextInt() throws NumberFormatException, IOException {
+			return Integer.parseInt(nextToken());
+		}
+		
+		long nextLong() throws NumberFormatException, IOException {
+			return Long.parseLong(nextToken());
+		}
+		
+		double nextDouble() throws NumberFormatException, IOException {
+			return Double.parseDouble(nextToken());
+		}
+	}
+}

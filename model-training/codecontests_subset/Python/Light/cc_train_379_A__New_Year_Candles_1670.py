@@ -1,0 +1,10 @@
+n,m=input().split()
+n=int(n)
+m=int(m)
+sum=n
+while(n>=m):
+    div=int(n/m)
+    sum=sum+div
+    r=n%m
+    n=div+r
+print(sum)

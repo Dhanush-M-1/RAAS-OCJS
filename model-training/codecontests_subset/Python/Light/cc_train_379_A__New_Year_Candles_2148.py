@@ -1,0 +1,28 @@
+p=input().split()
+a=int(p[0])
+b=int(p[1])
+sum1=a
+y=0
+i=1
+while(True):
+    x=a//b
+    y=y+a%b
+    sum1=sum1+x
+    a=x
+    if(a<b):
+        s=y+a
+        break
+    i=i+1
+sum2=0
+q=0
+i=1
+while(True):
+    w=s//b
+    q=q+s%b
+    sum2=sum2+w
+    s=w
+    if(s<b):
+        n=q+s
+        break
+    i=i+1
+print(sum1+sum2+n//b)

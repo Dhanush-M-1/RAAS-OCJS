@@ -1,0 +1,15 @@
+def solve(n,arr):
+	if arr[0] + arr[1] > arr[-1]:
+		print("-1")
+	else:
+		print(f"1 2 {n}")
+
+
+
+
+t=int(input())
+for i in range(t):
+	n=int(input())
+	arr=list(map(int,input().split()))
+	solve(n,arr)
+

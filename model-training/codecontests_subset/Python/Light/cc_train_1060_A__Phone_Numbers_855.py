@@ -1,0 +1,5 @@
+count = int(input())
+digits = input()
+max_8 = digits.count('8')
+max_dig = int(count/11)
+print (min(max_8, max_dig))

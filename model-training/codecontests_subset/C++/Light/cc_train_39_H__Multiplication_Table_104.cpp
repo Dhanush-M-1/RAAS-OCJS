@@ -1,0 +1,13 @@
+#include <bits/stdc++.h>
+using namespace std;
+int n, i, j, k;
+void bin(int k) {
+  if (k == 0) return;
+  bin(k / n);
+  cout << k % n;
+}
+int main() {
+  cin >> n;
+  for (i = 1; i < n; i++, cout << '\n')
+    for (j = 1; j < n; j++, cout << ' ') bin(i * j);
+}

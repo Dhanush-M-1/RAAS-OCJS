@@ -1,0 +1,6 @@
+n = int(input())
+a1 = sum([int(x) for x in input().split()])
+a2 = sum([int(x) for x in input().split()])
+a3 = sum([int(x) for x in input().split()])
+print(a1 - a2)
+print(a2 - a3)

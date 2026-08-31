@@ -1,0 +1,16 @@
+import java.util.*;
+
+public class Main {
+
+    public static void main(String[] args) {
+        Scanner input = new Scanner(System.in);
+        int a = input.nextInt();
+        int b = input.nextInt();
+        for (int i = 1; i <= a; i++){
+            if (i % b == 0){
+                a++;
+            }
+        }
+        System.out.println(a);
+    }
+}

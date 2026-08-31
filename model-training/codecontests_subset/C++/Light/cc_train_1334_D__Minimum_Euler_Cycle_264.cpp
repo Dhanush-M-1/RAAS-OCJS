@@ -1,0 +1,30 @@
+#include <bits/stdc++.h>
+using namespace std;
+int main() {
+  int t;
+  cin >> t;
+  while (t--) {
+    int n;
+    cin >> n;
+    long long l, r;
+    cin >> l >> r;
+    long long h = 1;
+    int i = 1;
+    while (i < n && h + (n - i) * 2 <= l) {
+      h += (n - i) * 2;
+      i++;
+    }
+    while (i < n && h <= r) {
+      for (int j = i + 1; j <= n; j++) {
+        if (l <= h && h <= r) cout << i << ' ';
+        h++;
+        if (l <= h && h <= r) cout << j << ' ';
+        h++;
+      }
+      i++;
+    }
+    if (h <= r) cout << 1;
+    cout << '\n';
+  }
+  return 0;
+}

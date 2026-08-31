@@ -1,0 +1,7 @@
+n  = int(input())
+ai = list(map(int, input().split()))
+bi = list(map(int, input().split()))
+ci = list(map(int, input().split()))
+num = sum(bi)
+print(sum(ai) - num)
+print(num - sum(ci))

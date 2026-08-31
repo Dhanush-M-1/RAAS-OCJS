@@ -1,0 +1,9 @@
+a=int(input())
+b=input()
+c=b.count("I")
+if(c>1):
+    print(0)
+elif(c==1):
+    print(1)
+else:
+    print(b.count("A"))

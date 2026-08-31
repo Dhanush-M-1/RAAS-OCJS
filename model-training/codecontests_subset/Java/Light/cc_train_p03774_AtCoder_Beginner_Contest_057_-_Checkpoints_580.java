@@ -1,0 +1,34 @@
+import java.util.*;
+
+public class Main {
+	public static void main(String[] args) {
+		Scanner sc = new Scanner(System.in);
+		int N = sc.nextInt();
+		int M = sc.nextInt();
+		int[][] students = new int[N][2];
+		int[][] points = new int[M][2];
+		for(int i=0; i<N; i++) {
+			students[i][0] = sc.nextInt();
+			students[i][1] = sc.nextInt();
+		}
+		for(int i=0; i<M; i++) {
+			points[i][0] = sc.nextInt();
+			points[i][1] = sc.nextInt();
+		}
+		for(int i=0; i<N; i++) {
+			int idx = 0;
+			for(int j=1; j<M; j++)
+				if(distance(students[i], points[j]) < distance(students[i], points[idx]))
+					idx = j;
+			System.out.println(idx+1);
+		}
+		sc.close();
+	}
+	
+	static int distance(int[] a, int[] b) {
+		int ans = 0;
+		for(int i=0; i<a.length; i++)
+			ans += Math.abs(b[i]-a[i]);
+		return ans;
+	}
+}

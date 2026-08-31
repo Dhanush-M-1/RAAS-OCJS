@@ -1,0 +1,6 @@
+n=int(input())
+st1=list(map(int,input().split()))
+st2=list(map(int,input().split()))
+st3=list(map(int,input().split()))
+print(sum(st1)-sum(st2))
+print(sum(st2)-sum(st3))

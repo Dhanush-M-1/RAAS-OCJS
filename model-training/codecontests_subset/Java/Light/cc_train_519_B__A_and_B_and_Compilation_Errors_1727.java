@@ -1,0 +1,24 @@
+import java.util.Scanner;
+public class Solution{
+    public static void main(String[] args){
+        Scanner sc = new Scanner(System.in);
+        int t = sc.nextInt();
+        int iteration = t-2;
+        long sum =0;
+        long prevSum =0;
+        int c =0;
+        while(t-- >=iteration){
+            for(int i=1;i<=(t+1);i++){
+                sum = sum+sc.nextLong();
+            }
+            if(c==0){
+                prevSum = sum;
+            }else{
+            System.out.println(prevSum - sum);
+             prevSum = sum;
+        }
+        sum=0;
+        c++;
+    }
+  }
+}

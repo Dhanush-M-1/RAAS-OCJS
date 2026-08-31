@@ -1,0 +1,6 @@
+n=int(input())
+l=sum(map(int,input().split()))
+l1=sum(map(int,input().split()))
+l2=sum(map(int,input().split()))
+print(l-l1)
+print(l1-l2)

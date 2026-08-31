@@ -1,0 +1,1 @@
+import java.util.*;public class Main {public static void main(String[] args) {Scanner yomi = new Scanner(System.in);int[] suuzi = new int[2];for (int i=0;i<2;i++){suuzi[i]=yomi.nextInt();}if (suuzi[0]<10 && suuzi[1]<10){System.out.println(suuzi[0]*suuzi[1]);}else System.out.println(-1);}}

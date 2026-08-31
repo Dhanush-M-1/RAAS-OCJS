@@ -1,0 +1,10 @@
+a,b=map(int,input().split())
+total_hours=a
+division=0
+reminder=0
+while(a>=b):
+    division=a//b
+    total_hours+=division
+    reminder=a%b
+    a=division+reminder
+print(total_hours)

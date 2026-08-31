@@ -1,0 +1,6 @@
+n=int(input())
+set1=sum(list(map(int,input().split())))
+set2=sum(list(map(int,input().split())))
+set3=sum(list(map(int,input().split())))
+print(set1-set2)
+print(set2-set3)

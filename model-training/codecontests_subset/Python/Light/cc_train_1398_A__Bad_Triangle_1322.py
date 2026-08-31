@@ -1,0 +1,3 @@
+for _ in range(int(input())):
+    n,a = int(input()),list(map(int,input().split()))
+    print(1,2,n) if a[0]+a[1] <= a[-1] else print(-1)

@@ -1,0 +1,57 @@
+t=int(input())
+for _ in range(t):
+	n=int(input())
+	imp=[]
+	for i in range(n):
+		temp=input()
+		if(i==0):
+			imp.append(temp[1])
+			imp.append(temp[2])
+		elif(i==1):
+			imp.append(temp[0])
+			imp.append(temp[1])
+		elif(i==2):
+			imp.append(temp[0])
+	count=0
+	ans=[]
+	if(imp[0]!='0'):
+		ans.append([1,2])
+		count+=1
+	if(imp[2]!='0'):
+		ans.append([2,1])
+		count+=1
+	if(imp[1]!='1'):
+		ans.append([1,3])
+		count+=1
+	if(imp[3]!='1'):
+		ans.append([2,2])
+		count+=1
+	if(imp[4]!='1'):
+		ans.append([3,1])
+		count+=1
+	if(count<=2):
+		print(count)
+		for i in ans:
+			print(i[0],i[1])
+	else:
+		count=0
+		ans=[]
+		if(imp[0]!='1'):
+			ans.append([1,2])
+			count+=1
+		if(imp[2]!='1'):
+			ans.append([2,1])
+			count+=1
+		if(imp[1]!='0'):
+			ans.append([1,3])
+			count+=1
+		if(imp[3]!='0'):
+			ans.append([2,2])
+			count+=1
+		if(imp[4]!='0'):
+			ans.append([3,1])
+			count+=1
+		if(count<=2):
+			print(count)
+			for i in ans:
+				print(i[0],i[1])

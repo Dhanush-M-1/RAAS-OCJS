@@ -1,0 +1,11 @@
+l=list(map(int,input().split()))
+total=0
+reminder=0
+while(l[0]!=0):
+    total+=l[0]
+    reminder+=l[0]%l[1]
+    l[0]=l[0]//l[1]
+while(reminder//l[1]!=0):
+    total+=reminder//l[1]
+    reminder=(reminder%l[1])+(reminder//l[1])
+print(total)

@@ -1,0 +1,20 @@
+# non-degenerate triangle conditions:
+# a+b>c
+# a+c>b
+# b+c>a
+
+t = int(input())
+for _ in range(t):
+    n = int(input())
+    a = [int(i) for i in input().split(" ")]
+    i = 0
+    j = 1
+    k = len(a) - 1
+    while j<k:
+        if a[i] + a[j] <= a[k]:
+            print(i+1, j+1, k+1)
+            break
+        i+=1
+        j+=1
+    if j>=k:
+        print(-1)

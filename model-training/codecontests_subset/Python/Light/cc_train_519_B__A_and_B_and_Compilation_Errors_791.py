@@ -1,0 +1,13 @@
+n=int(input())
+a=list(map(int,input().split()))
+b=list(map(int,input().split()))
+c=list(map(int,input().split()))
+#print(a)
+#print(b)
+#print(c)
+x=sum(a)
+y=sum(b)
+z=sum(c)
+print(x-y)
+print(y-z)
+        

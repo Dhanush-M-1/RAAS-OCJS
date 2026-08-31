@@ -1,0 +1,7 @@
+n=int(input())
+l=lambda:list(map(int,input().split()))
+a=sum(l())
+b=sum(l())
+c=sum(l())
+print(a-b)
+print(b-c)

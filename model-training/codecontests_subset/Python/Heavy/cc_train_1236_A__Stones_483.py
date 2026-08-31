@@ -1,0 +1,41 @@
+t=int(input())
+for i in range(t):
+    a,b,c=map(int,input().split())
+    m,n,o=a,b,c
+    s=0
+    if(n<=o//2):
+        s+=3*n
+        o-=n*2
+        n=0
+    else:
+        s+=3*(o//2)
+        n-=o//2
+        o-=2*(o//2)
+    if(m<=n//2):
+        s+=3*m
+        n-=m*2
+        m=0
+    else:
+        s+=3*(n//2)
+        m-=n//2
+        n-=2*(n//2)
+    j=s
+    s=0
+    m,n,o=a,b,c
+    if(m<=n//2):
+        s+=3*m
+        n-=m*2
+        m=0
+    else:
+        s+=3*(n//2)
+        m-=n//2
+        n-=2*(n//2)
+    if(n<=o//2):
+        s+=3*n
+        o-=n*2
+        n=0
+    else:
+        s+=3*(o//2)
+        n-=o//2
+        o-=2*(o//2)
+    print(j if j>=s else s)

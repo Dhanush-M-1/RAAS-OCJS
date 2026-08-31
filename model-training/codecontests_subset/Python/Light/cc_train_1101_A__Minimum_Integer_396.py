@@ -1,0 +1,11 @@
+for z in range(int(input())):
+    l, r, d = map(int, input().split())
+    if d < l:
+        print(d)
+    elif d > r:
+        print(d)
+    else:
+        if r // d == r / d:
+            print(((r//d)+1)*d)
+        else:
+            print((r//d)*d + d)

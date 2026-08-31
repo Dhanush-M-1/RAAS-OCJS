@@ -1,0 +1,9 @@
+n,k=map(int,input().split())
+su=n
+while(True):
+    c=n//k
+    n=c+(n%k)
+    su+=c
+    if(n<k):
+        break
+print(su)

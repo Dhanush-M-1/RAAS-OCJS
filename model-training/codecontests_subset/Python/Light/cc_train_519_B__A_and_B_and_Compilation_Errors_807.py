@@ -1,0 +1,10 @@
+import functools
+n = int(input())
+l1 = list(map(int,input().split()))
+l2 = list(map(int,input().split()))
+l3 = list(map(int,input().split()))
+xor1 = functools.reduce(lambda x,y:x^y,l1)
+xor2 = functools.reduce(lambda x,y:x^y,l2)
+xor3 = functools.reduce(lambda x,y:x^y,l3)
+print(xor1 ^ xor2)
+print(xor2 ^ xor3)

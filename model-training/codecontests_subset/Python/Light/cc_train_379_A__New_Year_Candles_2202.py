@@ -1,0 +1,11 @@
+a,b=map(int,input().split())
+r=0
+z=0
+while(a):
+	r+=a
+	z+=a%b
+	a//=b
+	if(z>=b):
+		a+=z//b
+		z%=b
+print(r)

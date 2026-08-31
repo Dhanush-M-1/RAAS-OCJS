@@ -1,0 +1,2 @@
+I=input
+exec(int(I())*"n=int(I());a=[[*map(ord,I())]for _ in[0]*n];a=a[0][1],a[1][0],a[-2][-1]^1,a[-1][-2]^1;b=*map(a.count,a),;m=b[0]>3or a[b.index(min(b))];r=[y for x,y in zip(a,('1 2','2 1',f'{n-1} {n}',f'{n} {n-1}'))if x==m];print(len(r),*r);")

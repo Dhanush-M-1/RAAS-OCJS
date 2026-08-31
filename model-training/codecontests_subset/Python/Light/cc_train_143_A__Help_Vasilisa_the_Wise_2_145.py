@@ -1,0 +1,20 @@
+r1,r2=map(int,input().split())
+c1,c2=map(int,input().split())
+d1,d2=map(int,input().split())
+i=1
+while(i<10):
+    j=1
+    while(j<10):
+        k=1
+        while(k<10):
+            l=1
+            while(l<10):
+                if((i+j)==r1 and (k+l)==r2 and (i+k)==c1 and (j+l)==c2 and (i+l)==d1 and (j+k)==d2 and j!=i and k!=i and k!=j and l!=i and l!=j and l!=k):
+                    print(i,j)
+                    print(k,l)
+                    exit()
+                l+=1
+            k+=1
+        j+=1
+    i+=1
+print("-1")

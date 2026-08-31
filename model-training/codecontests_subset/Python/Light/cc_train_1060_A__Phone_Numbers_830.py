@@ -1,0 +1,5 @@
+n=int(input())
+s=input()
+d=int(n/11)
+f=s.count('8')
+print(min(f,d))

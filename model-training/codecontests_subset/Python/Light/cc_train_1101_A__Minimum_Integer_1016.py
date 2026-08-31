@@ -1,0 +1,28 @@
+q=int(input())
+for i in range(q):
+	l,r,d=map(int,input().split())
+	if(d==1):
+		if(l<=1<=d):
+			print(r+1)
+		else:
+			print(1)
+	elif(l%d==0):
+		if(d<l):
+			print(d)
+		elif(l-d>0):
+			print(l-d)
+		else:
+			if(r%d==0):
+				print(r+d)
+			else:
+				print(r-r%d+d)
+	elif(l%d!=0):
+		if(d<l):
+			print(d)
+		elif(l-(l%d)>0):
+			print(l-(l%d))
+		else:
+			if(r%d==0):
+				print(r+d)
+			else:
+				print(r-r%d+d)

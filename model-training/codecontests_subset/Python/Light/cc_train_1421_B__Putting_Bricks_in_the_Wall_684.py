@@ -1,0 +1,2 @@
+I=input
+exec(int(I())*"n=int(I());a=[[*map(ord,I())]for _ in[0]*n];a=a[0][1],a[1][0],a[-2][-1]^1,a[-1][-2]^1;r=[y for x,y in zip(a,('1 2','2 1',f'{n-1} {n}',f'{n} {n-1}'))if(sum(a)>194)^x&1];print(len(r),*r);")

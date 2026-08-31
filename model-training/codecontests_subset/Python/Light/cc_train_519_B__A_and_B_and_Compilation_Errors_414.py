@@ -1,0 +1,8 @@
+x = int(input().strip())
+orig = list(map(int, input().strip().split()))
+new1 = list(map(int, input().strip().split()))
+new2 = list(map(int, input().strip().split()))
+ans1 = sum(orig)-sum(new1)
+ans2 = sum(new1)-sum(new2)
+print(ans1)
+print(ans2)

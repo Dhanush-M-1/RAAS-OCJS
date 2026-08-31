@@ -1,0 +1,5 @@
+input()
+li =  sum(list(map(int, input().split())))
+li2 = sum(list(map(int, input().split())))
+li3 = sum(list(map(int, input().split())))
+print(li - li2); print(li2 - li3)

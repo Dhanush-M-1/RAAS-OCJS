@@ -1,0 +1,6 @@
+a = int(input())
+a1 = list(map(int, input().split()))
+a2 = list(map(int, input().split()))
+a3 = list(map(int, input().split()))
+print(sum(a1) - sum(a2))
+print(sum(a2) - sum(a3))

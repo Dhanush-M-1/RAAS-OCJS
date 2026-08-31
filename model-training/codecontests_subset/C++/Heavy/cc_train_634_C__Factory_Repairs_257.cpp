@@ -1,0 +1,35 @@
+#include <bits/stdc++.h>
+using namespace std;
+const long long MAXN = 1e6 + 20;
+long long n, k, a, b, q, vec[2][MAXN];
+long long fen[2][MAXN];
+long long get(long long v, long long t) {
+  long long ret = 0;
+  for (; v; v -= v & (-v)) ret += fen[t][v];
+  return ret;
+}
+void add(long long v, long long val, long long t) {
+  for (; v < MAXN; v += v & (-v)) fen[t][v] += val;
+}
+int main() {
+  scanf("%I64d %I64d %I64d %I64d %I64d", &n, &k, &a, &b, &q);
+  while (q--) {
+    long long type;
+    scanf("%I64d", &type);
+    if (type == 2) {
+      long long v;
+      scanf("%I64d", &v);
+      printf("%I64d\n", get(v - 1, 0) + (get(MAXN - 2, 1) - get(v + k - 1, 1)));
+    } else {
+      long long v, val;
+      scanf("%I64d %I64d", &v, &val);
+      long long dif = min(val, b - vec[0][v]);
+      vec[0][v] += dif;
+      add(v, dif, 0);
+      dif = min(val, a - vec[1][v]);
+      vec[1][v] += dif;
+      add(v, dif, 1);
+    }
+  }
+  return 0;
+}

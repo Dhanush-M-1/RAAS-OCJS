@@ -1,0 +1,1 @@
+for _ in[0]*int(input()):l,r,d=map(int,input().split());print(d*(r//d+1,1)[d<l])

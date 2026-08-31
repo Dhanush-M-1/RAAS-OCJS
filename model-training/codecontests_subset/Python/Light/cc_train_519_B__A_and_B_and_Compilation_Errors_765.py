@@ -1,0 +1,8 @@
+n=int(input())
+l=list(map(int,input().split()))
+k=list(map(int,input().split()))
+m=list(map(int,input().split()))
+a=sum(l)
+b=sum(k)
+c=sum(m)
+print(a-b,b-c)

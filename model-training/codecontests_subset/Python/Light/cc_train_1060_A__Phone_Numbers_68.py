@@ -1,0 +1,5 @@
+n=int(input())
+s = input()
+s.count('8')
+a = int(n/11)
+print(min(s.count('8'),a))

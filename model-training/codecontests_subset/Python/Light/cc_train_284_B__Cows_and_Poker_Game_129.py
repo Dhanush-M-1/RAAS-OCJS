@@ -1,0 +1,5 @@
+x = int(input())
+a = input()
+if a.count("I") > 1: print(0)
+elif a.count('I') == 0: print(a.count('A'))
+else: print(1)

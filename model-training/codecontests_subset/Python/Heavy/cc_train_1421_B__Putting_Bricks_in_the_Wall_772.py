@@ -1,0 +1,125 @@
+#!/usr/bin/env python
+import os
+import sys
+from io import BytesIO, IOBase
+import threading 
+from bisect import bisect_right
+from math import gcd,log
+from collections import Counter
+from pprint import pprint
+from itertools import combinations 
+
+def fun(val,grid,n):
+    # print(grid)
+    bfs=[(0,0)]
+    delta=[(1,0),(-1,0),(0,1),(0,-1)]
+    visited=[[0]*n for i in range(n)]
+    visited[0][0]=1
+    while len(bfs):
+        # print(bfs,val)
+        x,y=bfs.pop()
+        if x==y==n-1:
+            return True
+        for dx,dy in delta :
+            nx=x+dx
+            ny=y+dy
+            if 0<=nx<n and 0<=ny<n and visited[nx][ny]==0 and grid[nx][ny] in [val,'F']:
+                visited[nx][ny]=1
+                bfs.append((nx,ny))
+    return False
+
+
+
+
+def main():
+    n=int(input())
+    arr=[]
+    for i in range(n):
+        arr.append([c for c in input()])
+    l=[(1,0),(0,1),(n-1,n-2),(n-2,n-1)]
+    c=list(combinations(l,0))+list(combinations(l,1))+list(combinations(l,2))
+
+    for li in c :
+        # print(li)
+        for x,y in li :
+            arr[x][y]='1' if arr[x][y]=='0' else '0'
+
+        if fun('0',arr,n) or fun('1',arr,n):
+            pass
+        else:
+            print(len(li))
+            for x,y in li :
+                print(x+1,y+1)
+            return 
+        for x,y in li :
+            arr[x][y]='1' if arr[x][y]=='0' else '0'
+
+    
+
+
+
+
+    
+
+
+    
+        
+BUFSIZE = 8192
+ 
+ 
+class FastIO(IOBase):
+    newlines = 0
+ 
+    def __init__(self, file):
+        self._fd = file.fileno()
+        self.buffer = BytesIO()
+        self.writable = "x" in file.mode or "r" not in file.mode
+        self.write = self.buffer.write if self.writable else None
+ 
+    def read(self):
+        while True:
+            b = os.read(self._fd, max(os.fstat(self._fd).st_size, BUFSIZE))
+            if not b:
+                break
+            ptr = self.buffer.tell()
+            self.buffer.seek(0, 2), self.buffer.write(b), self.buffer.seek(ptr)
+        self.newlines = 0
+        return self.buffer.read()
+ 
+    def readline(self):
+        while self.newlines == 0:
+            b = os.read(self._fd, max(os.fstat(self._fd).st_size, BUFSIZE))
+            self.newlines = b.count(b"\n") + (not b)
+            ptr = self.buffer.tell()
+            self.buffer.seek(0, 2), self.buffer.write(b), self.buffer.seek(ptr)
+        self.newlines -= 1
+        return self.buffer.readline()
+ 
+    def flush(self):
+        if self.writable:
+            os.write(self._fd, self.buffer.getvalue())
+            self.buffer.truncate(0), self.buffer.seek(0)
+ 
+ 
+class IOWrapper(IOBase):
+    def __init__(self, file):
+        self.buffer = FastIO(file)
+        self.flush = self.buffer.flush
+        self.writable = self.buffer.writable
+        self.write = lambda s: self.buffer.write(s.encode("ascii"))
+        self.read = lambda: self.buffer.read().decode("ascii")
+        self.readline = lambda: self.buffer.readline().decode("ascii")
+ 
+ 
+sys.stdin, sys.stdout = IOWrapper(sys.stdin), IOWrapper(sys.stdout)
+input = lambda: sys.stdin.readline().rstrip("\r\n")
+ 
+# endregion
+ 
+if __name__ == "__main__":
+
+    for _ in range(int(input())):
+        main()
+
+
+

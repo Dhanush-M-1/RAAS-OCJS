@@ -1,0 +1,1 @@
+var N = readline().trim().split(" ").map(function(x){return parseInt(x);}); var sum = 0; for(var i=0; i < N.length; i++){ sum+=N[i]; } if (sum==0 || sum%5 != 0) {print(-1);} else {print(sum / 5);}

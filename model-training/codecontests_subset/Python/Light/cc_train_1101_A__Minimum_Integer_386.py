@@ -1,0 +1,21 @@
+q=int(input())
+for j in range(q):
+	l,r,d=map(int,input().split())
+	ans=[]
+	if(d==1):
+		if(l-d>0):
+			ans.append(l-d)
+		ans.append(r+d)
+	if(l%d==0):
+		if(l-d>0):
+			ans.append(l-d)
+	if(r%d==0):
+		ans.append(r+d)
+	if(l%d):
+		if(l-l%d>0):
+			ans.append(l-l%d)
+	if(r%d):
+		ans.append(r+d-r%d)
+	if(d<l):
+		ans.append(d)
+	print(min(ans))

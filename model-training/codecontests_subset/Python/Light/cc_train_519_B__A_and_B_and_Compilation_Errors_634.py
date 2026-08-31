@@ -1,0 +1,6 @@
+I = lambda : sum(map(int, input().split()))
+input()
+a = I()
+b = I()
+c = I()
+print(a-b, b-c)

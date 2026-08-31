@@ -1,0 +1,10 @@
+a,b=input().split()
+a=int(a)
+p=a
+b=int(b)
+n=a
+while(n>0):
+    n=a//b
+    a=n+a%b
+    p=p+n
+print(p)

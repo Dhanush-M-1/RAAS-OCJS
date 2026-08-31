@@ -1,0 +1,16 @@
+a,b=map(int,input().split())
+c=a
+x=a//b
+y=(a%b)
+c+=x
+while(x!=0):
+	i=x+y
+	x=i//b
+	y=i%b+x
+	c+=x
+	while(y>=b):
+		x=y//b
+		y=y%b+x
+		c+=x
+	break
+print(c)

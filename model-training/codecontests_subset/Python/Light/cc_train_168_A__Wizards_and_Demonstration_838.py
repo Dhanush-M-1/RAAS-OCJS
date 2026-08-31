@@ -1,0 +1,11 @@
+n,x,y=map(int,input().split())
+if((y*n)%100!=0):
+    if(int(y*n/100)-x+1<0):
+        print(0)
+    else:
+        print(int(y*n/100)-x+1)
+else:
+    if(int(y*n/100)-x<0):
+        print(0)
+    else:
+        print(int(y*n/100)-x)

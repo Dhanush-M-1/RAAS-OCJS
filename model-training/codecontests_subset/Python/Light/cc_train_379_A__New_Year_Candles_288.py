@@ -1,0 +1,18 @@
+var = input()
+
+n, m = var.split()
+
+n = int(n)
+m = int(m)
+
+old_m = m
+
+while n >= m:
+	n += 1
+	m += old_m
+
+print(n)
+
+
+#bit.do/soft-dev-ub
+#

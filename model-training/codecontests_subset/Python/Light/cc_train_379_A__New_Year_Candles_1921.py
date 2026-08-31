@@ -1,0 +1,10 @@
+a,b=map(int,input().split())
+sum=a
+div=0
+rem=0
+while(a>=b):
+    div=a//b
+    sum+=div
+    rem=a%b
+    a=div+rem
+print(sum)

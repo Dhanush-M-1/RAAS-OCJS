@@ -1,0 +1,18 @@
+
+import java.util.Scanner;
+
+public class New_Year_Candles {
+
+    public static void main(String[] args) {
+        Scanner in = new Scanner(System.in);
+        int a = in.nextInt();
+        int b = in.nextInt();
+        int count = a;
+        while (a - b >= 0) {
+            a -= b;
+            a++;
+            count++;
+        }
+        System.out.println(count);
+    }
+}

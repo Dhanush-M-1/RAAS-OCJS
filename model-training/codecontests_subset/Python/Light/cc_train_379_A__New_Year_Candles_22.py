@@ -1,0 +1,9 @@
+a,b=map(int,input().split())
+c=a
+while(True):
+    x=a//b
+    c=c+x
+    a=x+(a%b)
+    if(a<b):
+        break
+print(c)

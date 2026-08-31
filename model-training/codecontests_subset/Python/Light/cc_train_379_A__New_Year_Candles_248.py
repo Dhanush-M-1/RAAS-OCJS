@@ -1,0 +1,7 @@
+n,k=map(int,input().split())
+c=0
+c+=n
+while(n>=k):
+    c+=n//k
+    n=n%k + n//k
+print(c)

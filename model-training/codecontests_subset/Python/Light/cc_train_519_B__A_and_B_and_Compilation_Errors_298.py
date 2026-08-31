@@ -1,0 +1,6 @@
+n=int(input())
+l=list(map(int,input().split()))
+li=list(map(int,input().split()))
+liI=list(map(int,input().split()))
+print(sum(l)-sum(li))
+print(sum(li)-sum(liI))

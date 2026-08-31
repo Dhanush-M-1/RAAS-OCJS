@@ -1,0 +1,59 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+"""Codeforces Round #702 (Div. 3)
+
+Problem G. Old Floppy Drive
+
+:author:         Kitchen Tong
+:mail:    kctong529@gmail.com
+
+Please feel free to contact me if you have any question
+regarding the implementation below.
+"""
+
+__version__ = '3.2'
+__date__ = '2021-03-14'
+
+
+import sys
+from bisect import bisect_left
+from itertools import accumulate
+
+
+def solve(n, m, a, x):
+    p = list(accumulate(a))
+    s = p[-1]
+    for i in range(1, n):
+        p[i] = max(p[i], p[i-1])
+
+    ans = list()
+    for i in range(m):
+        if s <= 0 and x[i] > p[-1]:
+            ans.append(-1)
+            continue
+        elif s <= 0 or x[i] <= p[-1]:
+            k = 0
+        else:
+            k = (x[i] - p[-1]) // s
+            if (x[i] - p[-1]) % s > 0:
+                k += 1
+        x[i] -= k * s
+        index = bisect_left(p, x[i])
+        ans.append(k * n + index)
+    return ans
+
+
+def main(argv=None):
+    t = int(input())
+    for _ in range(t):
+        n, m = map(int, input().split())
+        a = list(map(int, input().split()))
+        x = list(map(int, input().split()))
+        print(' '.join(map(str, solve(n, m, a, x))))
+    return 0
+
+
+if __name__ == "__main__":
+    STATUS = main()
+    sys.exit(STATUS)

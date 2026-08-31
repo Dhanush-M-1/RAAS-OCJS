@@ -1,0 +1,5 @@
+n=int(input())
+a=input()
+b=a.count('A')
+c=a.count('I')
+print('0'if c>1 else (1,b)[c==0])

@@ -1,0 +1,43 @@
+import java.util.*;
+import java.lang.*;
+
+
+public class Main {
+	public static void main(String[] args) {
+		Scanner sc = new Scanner(System.in);
+		int n = sc.nextInt();
+		int m = sc.nextInt();
+		int[] a = new int[n];
+		int[] b = new int[n];
+		int[] c = new int[m];
+		int[] d = new int[m];
+		for (int i = 0; i < n; i++) {
+			a[i] = sc.nextInt();
+			b[i] = sc.nextInt();
+		}
+		for (int i = 0; i < m; i++) {
+			c[i] = sc.nextInt();
+			d[i] = sc.nextInt();
+		}
+		int[] minDistance = new int[n];
+		for (int i = 0; i < n; i++) {
+			minDistance[i] = 1000000000;
+		}
+		int[] minIndex = new int[n];
+		for (int i = 0; i < n; i++) {
+			minIndex[i] = -1;
+		}
+		for (int i = 0; i < n; i++) {
+			for (int j = 0; j < m; j++) {
+				int distance = Math.abs(a[i] - c[j]) + Math.abs(b[i] - d[j]);
+				if (distance < minDistance[i]) {
+					minDistance[i] = distance;
+					minIndex[i] = j;
+				}
+			}
+		}
+		for (int i = 0; i < n; i++) {
+			System.out.println(minIndex[i] + 1);
+		}
+	}
+}
