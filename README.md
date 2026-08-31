@@ -36,10 +36,12 @@ Execution completes → Result + Metrics logged
 ```
 
 **Hot path (Rust, runs once per submission, no Python dependency):**
-tree-sitter parsing, feature extraction, XGBoost inference (via Treelite), isolation manager (cgroups v2), reactive monitor, judge core (intake, compile, execute, compare).
+tree-sitter parsing, feature extraction, XGBoost inference (compiled to Rust via m2cgen — no model file loaded at runtime), isolation manager (cgroups v2), reactive monitor, judge core (intake, compile, execute, compare).
 
 **Offline (Python, batch/one-time only):**
-CodeNet loading/cleaning/sampling, feature-label join, XGBoost training, Treelite export.
+CodeNet/CodeContests loading → sampling → **Rust feature extraction** → XGBoost training → model artifacts (`.joblib`/`.json`/`.checkpoint`) → **`regenerate_models.sh` compiles the model into Rust (`server/src/generated/*.rs`) for the judge**.
+
+Full sequence with copy-paste commands: see [`model-training/README.md`](model-training/README.md) (training) and [`server/README.md`](server/README.md) (run/judge).
 
 The Baseline strategy skips the classifier and monitor entirely; Predictive skips the monitor; Reactive skips the classifier and assigns a default tier.
 
@@ -49,7 +51,7 @@ The Baseline strategy skips the classifier and monitor entirely; Predictive skip
 |---|---|---|
 | Parsing | tree-sitter (Rust bindings) | Multi-language AST parsing, no hand-rolled parser per language |
 | Feature extraction | Custom Rust logic on tree-sitter's tree | 21 AST & structural features: nesting depth, loop topology (depth & count), cyclomatic complexity, recursion branching count, static BSS/global array allocations, fast I/O detection, heavy STL/collection structures, 2D matrix indexing, code volume, and interaction ratios |
-| Predictive model | XGBoost & Treelite | Specialized per-language + unified multi-language XGBoost models trained on CodeNet (83–89% accuracy on unseen problems); compiled via Treelite for microsecond Python-free C/Rust runtime inference |
+| Predictive model | XGBoost → compiled to Rust (`m2cgen`) | Specialized per-language + unified multi-language XGBoost models trained on CodeNet (83–89% accuracy on unseen problems); compiled to Rust via `m2cgen` so the judge runs microsecond, Python-free inference with no model file loaded at runtime |
 | Isolation | Raw Linux namespaces + cgroups v2 (no Docker) | Lower overhead; supports true mid-run migration, which container abstractions don't |
 | Monitoring | Direct reads of `memory.events`/`memory.pressure`, event-driven (`poll`/`inotify`) | Near-instant detection, no missed spikes between polls |
 | Dataset | IBM Project CodeNet | 13.9M real submissions, 55 languages, labeled with actual CPU time + memory |

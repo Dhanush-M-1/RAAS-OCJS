@@ -1,4 +1,5 @@
 use crate::models::{CaseResult, Submission, TestCase};
+use crate::policy::Tier;
 use std::process::Stdio;
 use std::time::Instant;
 use tokio::io::{self, AsyncWriteExt};
@@ -25,12 +26,20 @@ fn source_filename(language: &str) -> &'static str {
 
 fn write_source(submission: &Submission) -> std::io::Result<std::path::PathBuf> {
     let dir = std::env::temp_dir().join(format!("oj_{}", submission.id));
+    let _ = std::fs::remove_dir_all(&dir);
     std::fs::create_dir(&dir)?;
     std::fs::write(
         dir.join(source_filename(&submission.language)),
         &submission.source,
     )?;
     Ok(dir)
+}
+
+fn get_tier_limits(tier: &Tier) -> Vec<String> {
+    match tier {
+        Tier::Low => vec!["--cpus=1".to_string(), "--memory=256m".to_string()],
+        _ => vec![],
+    }
 }
 
 async fn run_case(
@@ -70,31 +79,31 @@ async fn run_case(
     })
 }
 
-pub async fn run_submission(submission: &Submission) -> Vec<CaseResult> {
-    let host_dir = write_source(submission).unwrap();
-    let (container, run_cmd) = start_and_compile(&submission.language, &submission.id, &host_dir)
-        .await
-        .unwrap();
+pub async fn run_submission(submission: &Submission, tier: &Tier) -> io::Result<Vec<CaseResult>> {
+    let host_dir = write_source(submission)?;
+    let (container, run_cmd) =
+        start_and_compile(&submission.language, &submission.id, &host_dir, tier).await?;
 
     let mut results = Vec::new();
     for test in &submission.test_cases {
-        results.push(run_case(&container, &run_cmd, test).await.unwrap());
+        results.push(run_case(&container, &run_cmd, test).await?);
     }
     let _ = Command::new("docker")
         .args(["rm", "-f", &container])
         .output()
         .await;
     let _ = std::fs::remove_dir_all(&host_dir);
-    results
+    Ok(results)
 }
 
 async fn start_and_compile(
     language: &str,
     submission_id: &String,
     host_dir: &std::path::PathBuf,
+    tier: &Tier,
 ) -> std::io::Result<(String, Vec<String>)> {
     let image = image_for(language);
-    let cname = &format!("oj_{}", submission_id);
+    let cname = format!("oj_{}", submission_id);
 
     let _ = Command::new("docker")
         .args(["rm", "-f", &cname])
@@ -112,20 +121,22 @@ async fn start_and_compile(
         "c" | "cpp" | "c++" => vec!["/app/run".to_string()],
         _ => vec![],
     };
-    let start = Command::new("docker")
-        .args([
-            "run",
-            "-d",
-            "--name",
-            &cname,
-            "--network=none",
-            image,
-            "sh",
-            "-c",
-            "sleep infinity",
-        ])
-        .output()
-        .await;
+    let tier_limits = get_tier_limits(tier);
+    let mut start_args = vec![
+        "run".to_string(),
+        "-d".to_string(),
+        "--name".to_string(),
+        cname.to_string(),
+        "--network=none".to_string(),
+    ];
+    start_args.extend(tier_limits);
+    start_args.extend([
+        image.to_string(),
+        "sh".to_string(),
+        "-c".to_string(),
+        "sleep infinity".to_string(),
+    ]);
+    let start = Command::new("docker").args(start_args).output().await;
     if !start?.status.success() {
         return Err(std::io::Error::other("Error in starting containers"));
     }
