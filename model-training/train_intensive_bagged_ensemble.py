@@ -23,12 +23,13 @@ from sklearn.metrics import (
     classification_report,
     confusion_matrix,
     f1_score,
+    precision_recall_curve,
     precision_score,
     recall_score,
     roc_auc_score,
     roc_curve,
 )
-from sklearn.model_selection import GroupKFold, GroupShuffleSplit
+from sklearn.model_selection import GroupKFold, GroupShuffleSplit, StratifiedGroupKFold
 import treelite
 import treelite.frontend
 import xgboost as xgb
@@ -134,11 +135,12 @@ def get_feature_cols(include_language: bool = True) -> list[str]:
 
 
 def find_optimal_threshold(y_true: np.ndarray, y_prob: np.ndarray) -> float:
-    fpr, tpr, thresholds = roc_curve(y_true, y_prob)
-    j_scores = tpr - fpr
-    best_idx = np.argmax(j_scores)
-    best_thresh = float(thresholds[best_idx])
-    return max(0.2, min(0.8, best_thresh))
+    """Find threshold that maximizes F1 score on validation set."""
+    precision, recall, thresholds = precision_recall_curve(y_true, y_prob)
+    f1_scores = 2 * (precision * recall) / np.maximum(precision + recall, 1e-8)
+    best_idx = np.argmax(f1_scores)
+    best_thresh = float(thresholds[min(best_idx, len(thresholds) - 1)])
+    return max(0.35, min(0.65, best_thresh))
 
 
 def train_bagged_ensemble(
@@ -156,7 +158,7 @@ def train_bagged_ensemble(
 
     unique_groups = len(np.unique(groups_train))
     n_splits = min(5, unique_groups)
-    cv_splitter = GroupKFold(n_splits=n_splits)
+    cv_splitter = StratifiedGroupKFold(n_splits=n_splits, shuffle=True, random_state=42)
 
     # Compute class weight
     neg_count = (y_train == 0).sum()
@@ -207,6 +209,10 @@ def train_bagged_ensemble(
     print(f"5-Fold CV Ensemble (Optimal Thresh={opt_threshold:.3f}): Acc={cv_acc:.4f}, F1={cv_f1:.4f}, ROC-AUC={cv_roc:.4f}")
 
     # Held-Out Unseen Test Problem Evaluation
+    test_preds_std = (test_probs_all >= 0.50).astype(int)
+    test_acc_std = accuracy_score(y_test, test_preds_std)
+    test_f1_std = f1_score(y_test, test_preds_std, zero_division=0)
+
     test_preds_opt = (test_probs_all >= opt_threshold).astype(int)
     test_acc_opt = accuracy_score(y_test, test_preds_opt)
     test_prec = precision_score(y_test, test_preds_opt, zero_division=0)
@@ -215,11 +221,12 @@ def train_bagged_ensemble(
     test_roc = roc_auc_score(y_test, test_probs_all) if len(np.unique(y_test)) > 1 else 1.0
 
     print(f"\nHeld-Out Test Results (Unseen Problems):")
-    print(f"  Accuracy (Optimized {opt_threshold:.2f}): {test_acc_opt:.4f}")
-    print(f"  Precision               : {test_prec:.4f}")
-    print(f"  Recall                  : {test_rec:.4f}")
-    print(f"  F1-Score                : {test_f1_opt:.4f}")
-    print(f"  ROC-AUC                 : {test_roc:.4f}")
+    print(f"  Accuracy (Standard 0.50)  : {test_acc_std:.4f} (F1: {test_f1_std:.4f})")
+    print(f"  Accuracy (Calibrated {opt_threshold:.2f}): {test_acc_opt:.4f}")
+    print(f"  Precision                  : {test_prec:.4f}")
+    print(f"  Recall                     : {test_rec:.4f}")
+    print(f"  F1-Score                   : {test_f1_opt:.4f}")
+    print(f"  ROC-AUC                    : {test_roc:.4f}")
 
     # Save Primary Model & Bagged Ensemble
     safe_name = name.lower().replace(" ", "_").replace("+", "p")
@@ -273,10 +280,10 @@ def main():
 
     df_full = pd.concat([df, lang_dummies], axis=1)
 
-    # 80/20 Problem-Grouped Split
+    # Stratified 80/20 Problem-Grouped Split (Guarantees class balance while isolating problems)
     groups = df_full["problem_id"]
-    gss = GroupShuffleSplit(n_splits=1, test_size=0.2, random_state=args.seed)
-    train_idx, test_idx = next(gss.split(df_full, df_full["target"], groups))
+    sgkf = StratifiedGroupKFold(n_splits=5, shuffle=True, random_state=args.seed)
+    train_idx, test_idx = next(sgkf.split(df_full, df_full["target"], groups))
 
     df_train = df_full.iloc[train_idx].copy()
     df_test = df_full.iloc[test_idx].copy()
