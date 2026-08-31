@@ -48,8 +48,8 @@ The Baseline strategy skips the classifier and monitor entirely; Predictive skip
 | Component | Choice | Why |
 |---|---|---|
 | Parsing | tree-sitter (Rust bindings) | Multi-language AST parsing, no hand-rolled parser per language |
-| Feature extraction | Custom Rust logic on tree-sitter's tree | Nesting depth, cyclomatic complexity, recursion, static large-allocation detection |
-| Predictive model | XGBoost | Trained on CodeNet's real CPU-time/memory labels; compiled via Treelite for native, Python-free inference |
+| Feature extraction | Custom Rust logic on tree-sitter's tree | 21 AST & structural features: nesting depth, loop topology (depth & count), cyclomatic complexity, recursion branching count, static BSS/global array allocations, fast I/O detection, heavy STL/collection structures, 2D matrix indexing, code volume, and interaction ratios |
+| Predictive model | XGBoost & Treelite | Specialized per-language + unified multi-language XGBoost models trained on CodeNet (83–89% accuracy on unseen problems); compiled via Treelite for microsecond Python-free C/Rust runtime inference |
 | Isolation | Raw Linux namespaces + cgroups v2 (no Docker) | Lower overhead; supports true mid-run migration, which container abstractions don't |
 | Monitoring | Direct reads of `memory.events`/`memory.pressure`, event-driven (`poll`/`inotify`) | Near-instant detection, no missed spikes between polls |
 | Dataset | IBM Project CodeNet | 13.9M real submissions, 55 languages, labeled with actual CPU time + memory |

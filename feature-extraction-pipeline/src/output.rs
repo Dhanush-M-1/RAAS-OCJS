@@ -19,9 +19,27 @@ pub struct Row {
     pub submission_id: String,
     pub language: String,
     pub nesting_depth: u32,
+    pub max_loop_depth: u32,
+    pub total_loops: u32,
     pub cyclomatic_complexity: u32,
     pub is_recursive: u32,
+    pub recursive_call_count: u32,
     pub large_alloc_flag: u32,
+    pub has_fast_io: u32,
+    pub has_heavy_datastructure: u32,
+    pub has_modulo_arithmetic: u32,
+    pub has_bitmask_ops: u32,
+    pub has_graph_adjacency: u32,
+    pub total_functions: u32,
+    pub total_calls: u32,
+    pub total_subscripts: u32,
+    pub total_2d_subscripts: u32,
+    pub total_arithmetic_ops: u32,
+    pub max_integer_constant: u64,
+    pub ast_node_count: u32,
+    pub ast_depth: u32,
+    pub source_loc: u32,
+    pub source_chars: u32,
     pub parse_error_flag: u32,
     pub label: String,
 }
@@ -35,11 +53,6 @@ pub struct Summary {
 }
 
 /// Build one [`Row`] per sample, de-duplicating on `(submission_id, language)`.
-///
-/// `submission_id`s repeat across languages in this dataset layout (e.g.
-/// `C/Light/s00000001.c` and `C++/Light/s00000001.cpp` both yield id
-/// `s00000001`), so the pair `(submission_id, language)` is the unique file
-/// key. A repeated pair is skipped and counted in [`Summary::dup_skipped`].
 pub fn build_rows(samples: &[Sample]) -> (Vec<Row>, Summary) {
     let mut rows = Vec::with_capacity(samples.len());
     let mut seen: HashSet<(String, String)> = HashSet::with_capacity(samples.len());
@@ -70,9 +83,27 @@ pub fn build_rows(samples: &[Sample]) -> (Vec<Row>, Summary) {
             submission_id: sample.submission_id.clone(),
             language: sample.language.as_str().to_string(),
             nesting_depth: feats.nesting_depth,
+            max_loop_depth: feats.max_loop_depth,
+            total_loops: feats.total_loops,
             cyclomatic_complexity: feats.cyclomatic_complexity,
             is_recursive: feats.is_recursive as u32,
+            recursive_call_count: feats.recursive_call_count,
             large_alloc_flag: feats.large_alloc_flag as u32,
+            has_fast_io: feats.has_fast_io as u32,
+            has_heavy_datastructure: feats.has_heavy_datastructure as u32,
+            has_modulo_arithmetic: feats.has_modulo_arithmetic as u32,
+            has_bitmask_ops: feats.has_bitmask_ops as u32,
+            has_graph_adjacency: feats.has_graph_adjacency as u32,
+            total_functions: feats.total_functions,
+            total_calls: feats.total_calls,
+            total_subscripts: feats.total_subscripts,
+            total_2d_subscripts: feats.total_2d_subscripts,
+            total_arithmetic_ops: feats.total_arithmetic_ops,
+            max_integer_constant: feats.max_integer_constant,
+            ast_node_count: feats.ast_node_count,
+            ast_depth: feats.ast_depth,
+            source_loc: feats.source_loc,
+            source_chars: feats.source_chars,
             parse_error_flag: feats.parse_error_flag as u32,
             label: sample.label.clone(),
         });
@@ -86,18 +117,36 @@ pub fn write_csv(path: &Path, rows: &[Row]) -> std::io::Result<()> {
     let file = File::create(path)?;
     let mut w = BufWriter::new(file);
     w.write_all(
-        b"submission_id,language,nesting_depth,cyclomatic_complexity,is_recursive,large_alloc_flag,parse_error_flag,label\n",
+        b"submission_id,language,nesting_depth,max_loop_depth,total_loops,cyclomatic_complexity,is_recursive,recursive_call_count,large_alloc_flag,has_fast_io,has_heavy_datastructure,has_modulo_arithmetic,has_bitmask_ops,has_graph_adjacency,total_functions,total_calls,total_subscripts,total_2d_subscripts,total_arithmetic_ops,max_integer_constant,ast_node_count,ast_depth,source_loc,source_chars,parse_error_flag,label\n",
     )?;
     for r in rows {
         writeln!(
             w,
-            "{},{},{},{},{},{},{},{}",
+            "{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}",
             csv_escape(&r.submission_id),
             csv_escape(&r.language),
             r.nesting_depth,
+            r.max_loop_depth,
+            r.total_loops,
             r.cyclomatic_complexity,
             r.is_recursive,
+            r.recursive_call_count,
             r.large_alloc_flag,
+            r.has_fast_io,
+            r.has_heavy_datastructure,
+            r.has_modulo_arithmetic,
+            r.has_bitmask_ops,
+            r.has_graph_adjacency,
+            r.total_functions,
+            r.total_calls,
+            r.total_subscripts,
+            r.total_2d_subscripts,
+            r.total_arithmetic_ops,
+            r.max_integer_constant,
+            r.ast_node_count,
+            r.ast_depth,
+            r.source_loc,
+            r.source_chars,
             r.parse_error_flag,
             csv_escape(&r.label)
         )?;
@@ -224,9 +273,27 @@ mod tests {
             submission_id: "s001".into(),
             language: "C".into(),
             nesting_depth: 2,
+            max_loop_depth: 1,
+            total_loops: 1,
             cyclomatic_complexity: 4,
             is_recursive: 1,
+            recursive_call_count: 1,
             large_alloc_flag: 0,
+            has_fast_io: 0,
+            has_heavy_datastructure: 0,
+            has_modulo_arithmetic: 0,
+            has_bitmask_ops: 0,
+            has_graph_adjacency: 0,
+            total_functions: 1,
+            total_calls: 2,
+            total_subscripts: 0,
+            total_2d_subscripts: 0,
+            total_arithmetic_ops: 3,
+            max_integer_constant: 100,
+            ast_node_count: 25,
+            ast_depth: 6,
+            source_loc: 10,
+            source_chars: 150,
             parse_error_flag: 0,
             label: "Light".into(),
         }];
@@ -236,9 +303,9 @@ mod tests {
         let mut lines = text.lines();
         assert_eq!(
             lines.next().unwrap(),
-            "submission_id,language,nesting_depth,cyclomatic_complexity,is_recursive,large_alloc_flag,parse_error_flag,label"
+            "submission_id,language,nesting_depth,max_loop_depth,total_loops,cyclomatic_complexity,is_recursive,recursive_call_count,large_alloc_flag,has_fast_io,has_heavy_datastructure,has_modulo_arithmetic,has_bitmask_ops,has_graph_adjacency,total_functions,total_calls,total_subscripts,total_2d_subscripts,total_arithmetic_ops,max_integer_constant,ast_node_count,ast_depth,source_loc,source_chars,parse_error_flag,label"
         );
-        assert_eq!(lines.next().unwrap(), "s001,C,2,4,1,0,0,Light");
+        assert_eq!(lines.next().unwrap(), "s001,C,2,1,1,4,1,1,0,0,0,0,0,0,1,2,0,0,3,100,25,6,10,150,0,Light");
         assert_eq!(lines.next(), None);
     }
 }

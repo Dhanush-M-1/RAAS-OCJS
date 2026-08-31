@@ -69,11 +69,11 @@ fn cli_binary_produces_csv_for_mock_dataset() {
     assert_eq!(lines.len(), 4, "header + 3 rows");
     assert_eq!(
         lines[0],
-        "submission_id,language,nesting_depth,cyclomatic_complexity,is_recursive,large_alloc_flag,parse_error_flag,label"
+        "submission_id,language,nesting_depth,max_loop_depth,total_loops,cyclomatic_complexity,is_recursive,recursive_call_count,large_alloc_flag,has_fast_io,has_heavy_datastructure,has_modulo_arithmetic,has_bitmask_ops,has_graph_adjacency,total_functions,total_calls,total_subscripts,total_2d_subscripts,total_arithmetic_ops,max_integer_constant,ast_node_count,ast_depth,source_loc,source_chars,parse_error_flag,label"
     );
-    assert!(csv_text.contains("s001,C,3,4,0,0,0,Light"));
-    assert!(csv_text.contains("s002,C,1,2,1,1,0,Heavy"));
-    assert!(csv_text.contains("s003,Python,1,2,1,1,0,Heavy"));
+    assert!(csv_text.contains("s001,C,3,2,2,4,0,0,0,0,0,0,0,0,1,0,0,0,"));
+    assert!(csv_text.contains("s002,C,1,0,0,2,1,1,1,0,0,0,0,0,1,2,0,0,"));
+    assert!(csv_text.contains("s003,Python,1,0,0,2,1,1,1,0,0,0,0,0,1,1,0,0,"));
 }
 
 #[test]
