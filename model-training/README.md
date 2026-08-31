@@ -16,8 +16,15 @@ Sampled Dataset Directory (subset/) + Manifest CSV (sample_manifest.csv)
 features.csv (26 AST & Structural Complexity Metrics)
        │
        ▼ [train_advanced_xgboost.py] (5-Fold GroupKFold on Unseen Problems)
-Treelite Checkpoints (.checkpoint) + JSON Models (artifacts/)
+artifacts/  →  model_*.joblib  ·  model_*.json  ·  treelite_*.checkpoint
+       │
+       ▼ [regenerate_models.sh] (m2cgen — compile XGBoost → Rust)
+server/src/generated/*.rs  ← compiled into the judge binary
 ```
+
+**The whole chain feeds the judge:** the server never loads a model file at runtime —
+`regenerate_models.sh` compiles the trained `.joblib` models into Rust source that
+`cargo build` bakes straight into the `server` binary.
 
 ---
 
@@ -64,7 +71,16 @@ python3 train_advanced_xgboost.py \
     --features-csv "./features.csv" \
     --manifest-csv "./sample_manifest.csv" \
     --output-dir "./artifacts"
+
+# Step 4: Compile the trained models into Rust for the judge (m2cgen)
+./regenerate_models.sh
+# then rebuild the judge so the new weights are baked in:
+cd ../server && cargo build && cd ../model-training
 ```
+
+> **Working directory note:** Steps 1–3 run from `model-training/`. Step 4 runs
+> `regenerate_models.sh` from `model-training/` too — it writes
+> `server/src/generated/*.rs` automatically.
 
 ---
 
@@ -88,7 +104,18 @@ python3 train_advanced_xgboost.py \
     --features-csv "./features_codecontests.csv" \
     --manifest-csv "./sample_manifest_codecontests.csv" \
     --output-dir "./artifacts"
+
+# Step 4: Compile the trained models into Rust for the judge (m2cgen)
+./regenerate_models.sh
+# then rebuild the judge so the new weights are baked in:
+cd ../server && cargo build && cd ../model-training
 ```
+
+> **Working directory note:** Steps 1–3 run from `model-training/`. Step 4 runs
+> `regenerate_models.sh` from `model-training/` too — it writes
+> `server/src/generated/*.rs` automatically. Both Option A and Option B write
+> into the **same** `./artifacts/` and `server/src/generated/`, so retraining on
+> a different dataset simply overwrites the models the judge uses.
 
 ---
 
@@ -118,6 +145,14 @@ python3 train_advanced_xgboost.py \
 ## 5. Exported Model Artifacts
 
 The output directory `./artifacts/` will contain:
-- **`treelite_*.checkpoint`**: Standalone compiled decision trees for sub-microsecond, pure C/Rust runtime inference (no Python interpreter needed in the judging engine hot path).
+- **`model_*.joblib`**: Pickled XGBoost models — **this is what `regenerate_models.sh` reads** to produce the Rust code for the judge.
 - **`model_*.json`**: Native XGBoost model representations.
+- **`treelite_*.checkpoint`**: Standalone compiled decision trees for sub-microsecond, pure C/Rust runtime inference (no Python interpreter needed in the judging engine hot path).
 - **`model_comparison.csv` / `.png`**: Evaluation metrics and cross-language performance visualizations.
+
+Step 4 (`regenerate_models.sh`) additionally writes **`server/src/generated/*.rs`** —
+the XGBoost models compiled to Rust via `m2cgen` that `cargo build` bakes into the judge.
+
+> **`regenerate_models.sh` needs `m2cgen` + `joblib`** installed in a Python venv at
+> `model-training/.venv` (see §2). It also handles the XGBoost 3.x `base_score=None`
+> quirk that otherwise breaks `m2cgen`.

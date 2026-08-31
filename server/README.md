@@ -45,14 +45,29 @@ there is **no Python dependency at runtime**.
 
 ### Rebuild the model after retraining (optional)
 
-If you retrain in `../model-training`, recompile the Rust model code, then rebuild:
+Retraining happens entirely in `model-training/` (dataset extraction → Rust
+feature extraction → XGBoost training → model artifacts). See
+[`../model-training/README.md`](../model-training/README.md) for the full sequence.
+
+To push a freshly trained model into the judge:
 
 ```bash
 cd ../model-training
-./regenerate_models.sh     # uses ./.venv/bin/python (needs m2cgen + joblib)
+./regenerate_models.sh     # compiles artifacts/*.joblib -> src/generated/*.rs
 cd ../server
-cargo build
+cargo build                # bakes the new weights into the binary
 ```
+
+> `regenerate_models.sh` needs `m2cgen` + `joblib` in a Python venv at
+> `model-training/.venv`. If the venv doesn't exist (e.g. after a clean checkout),
+> set it up first:
+>
+> ```bash
+> cd model-training
+> python3 -m venv .venv
+> ./.venv/bin/python -m ensurepip
+> ./.venv/bin/python -m pip install -r requirements.txt
+> ```
 
 ---
 
