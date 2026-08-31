@@ -1,5 +1,5 @@
 [package]
-name = "OJ-feature-extraction-spike"
+name = "feature-extraction"
 version = "0.1.0"
 edition = "2024"
 

@@ -7,11 +7,13 @@ __pycache__/
 
 # Raw datasets and sampled files (~112 MB)
 codenet_subset/
+codecontests_subset/
+features_*
 *.tar.gz
 *.zip
 
 # Intermediate data files (~15 MB)
-sample_manifest.csv
+sample_manifest*.csv
 features.csv
 
 # Binary trained models & Treelite checkpoints (~10 MB)

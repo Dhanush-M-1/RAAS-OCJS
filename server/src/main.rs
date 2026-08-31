@@ -1,6 +1,7 @@
 mod docker;
 mod models;
 mod policy;
+mod predict;
 mod queue;
 
 use axum::{Json, Router, routing::post};
@@ -9,9 +10,24 @@ use policy::TierPolicy;
 use queue::{start, submit};
 
 async fn judge(submission: Submission, policy: &(dyn TierPolicy + Send + Sync)) -> JudgeResult {
-    let tier = policy.initial_tier(&submission).name().to_string();
+    let tier = policy.initial_tier(&submission);
+    let tier_started = tier.name().to_string();
     let start = std::time::Instant::now();
-    let cases = docker::run_submission(&submission).await;
+    let cases = match docker::run_submission(&submission, &tier).await {
+        Ok(c) => c,
+        Err(_) => return JudgeResult {
+            submission_id: submission.id.clone(),
+            approach: policy.name().to_string(),
+            verdict: "SE".to_string(),
+            cpu_time_ms: 0,
+            peak_memory_bytes: 0,
+            wall_time_ms: 0,
+            tier_started,
+            tier_promoted: false,
+            promotion_time_ms: 0,
+            cases: vec![],
+        },
+    };
     let wall_ms = start.elapsed().as_millis() as u64;
     let cpu_ms = cases.iter().map(|c| c.cpu_time_ms).sum();
     let mem = cases.iter().map(|c| c.peak_memory_bytes).max().unwrap_or(0);
@@ -27,7 +43,7 @@ async fn judge(submission: Submission, policy: &(dyn TierPolicy + Send + Sync)) 
         cpu_time_ms: cpu_ms,
         peak_memory_bytes: mem,
         wall_time_ms: wall_ms,
-        tier_started: tier,
+        tier_started,
         tier_promoted: false,
         promotion_time_ms: 0,
         cases: cases,
