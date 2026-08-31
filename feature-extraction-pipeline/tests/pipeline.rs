@@ -171,7 +171,7 @@ fn pipeline_end_to_end_matches_hand_computed_values() {
     let mut lines = text.lines();
     assert_eq!(
         lines.next().unwrap(),
-        "submission_id,language,nesting_depth,cyclomatic_complexity,is_recursive,large_alloc_flag,parse_error_flag,label"
+        "submission_id,language,nesting_depth,max_loop_depth,total_loops,cyclomatic_complexity,is_recursive,recursive_call_count,large_alloc_flag,has_fast_io,has_heavy_datastructure,has_modulo_arithmetic,has_bitmask_ops,has_graph_adjacency,total_functions,total_calls,total_subscripts,total_2d_subscripts,total_arithmetic_ops,max_integer_constant,ast_node_count,ast_depth,source_loc,source_chars,parse_error_flag,label"
     );
     let data_lines = lines.filter(|l| !l.is_empty()).count();
     assert_eq!(data_lines, 7);

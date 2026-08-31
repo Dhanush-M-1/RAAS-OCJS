@@ -25,21 +25,50 @@ pub struct Features {
     /// Deepest nesting of for/while/if constructs. else-if / elif chains do NOT
     /// add extra depth (see `compute_nesting_depth` for the verified rationale).
     pub nesting_depth: u32,
+    /// Deepest nesting specifically of loops (for / while / do-while).
+    pub max_loop_depth: u32,
+    /// Total count of all loops in the source file.
+    pub total_loops: u32,
     /// McCabe cyclomatic complexity = 1 + decision points (if, for, while,
     /// case, &&, ||, ternary).
     pub cyclomatic_complexity: u32,
     /// `true` if any function calls itself by name within its own body.
-    /// Direct recursion only — mutual recursion is a documented limitation.
     pub is_recursive: bool,
-    /// `true` if a static allocation (malloc, `new T[]`, `.reserve()`,
-    /// collection-with-initial-capacity, container repetition, ...) is found
-    /// with a literal size above [`LARGE_ALLOC_THRESHOLD`]. Sizes given by a
-    /// variable are undetectable statically and are never flagged (documented
-    /// limitation).
+    /// Total count of recursive self-call sites (branching factor indicator).
+    pub recursive_call_count: u32,
+    /// `true` if a static allocation or global array has size above [`LARGE_ALLOC_THRESHOLD`].
     pub large_alloc_flag: bool,
-    /// `true` if the parse tree contains any ERROR node. When set, the four
-    /// features are still computed best-effort, but the row should be
-    /// inspected/filtered rather than silently trusted.
+    /// `true` if Fast I/O / bulk stream reading idioms are detected in source.
+    pub has_fast_io: bool,
+    /// `true` if heavy standard library structures (hash maps, trees, queues) are detected.
+    pub has_heavy_datastructure: bool,
+    /// `true` if standard prime modulo arithmetic (10^9+7, 998244353) is detected.
+    pub has_modulo_arithmetic: bool,
+    /// `true` if bitmask DP or bitwise operators/builtins are detected.
+    pub has_bitmask_ops: bool,
+    /// `true` if graph adjacency lists/matrices or edge arrays are detected.
+    pub has_graph_adjacency: bool,
+    /// Total number of function / method declarations.
+    pub total_functions: u32,
+    /// Total number of function / method call sites.
+    pub total_calls: u32,
+    /// Total array / collection index access expressions (`a[i]`).
+    pub total_subscripts: u32,
+    /// Total multi-dimensional array / matrix index expressions (`a[i][j]`).
+    pub total_2d_subscripts: u32,
+    /// Total binary arithmetic operation count (+, -, *, /, %).
+    pub total_arithmetic_ops: u32,
+    /// Largest integer literal / constant in source (excluding prime modulos).
+    pub max_integer_constant: u64,
+    /// Total count of AST nodes.
+    pub ast_node_count: u32,
+    /// Maximum depth of the AST hierarchy.
+    pub ast_depth: u32,
+    /// Count of non-empty source lines of code.
+    pub source_loc: u32,
+    /// Total character count of source code.
+    pub source_chars: u32,
+    /// `true` if the parse tree contains any ERROR node.
     pub parse_error_flag: bool,
     /// Count of ERROR nodes in the tree (informational / diagnostics).
     pub error_node_count: usize,
@@ -60,15 +89,55 @@ pub fn compute_features(source: &str, lang: Language) -> Features {
     let parse_error_flag = error_node_count > 0;
 
     let nesting_depth = compute_nesting_depth(root, lang);
+    let (max_loop_depth, total_loops) = compute_loop_metrics(root, lang);
     let cyclomatic_complexity = 1 + count_decision_points(root, source);
-    let is_recursive = detect_recursion(root, lang, source);
+    let (is_recursive, recursive_call_count) = detect_recursion_with_count(root, lang, source);
     let large_alloc_flag = detect_large_allocation(root, lang, source);
+    let has_fast_io = detect_fast_io(source, lang);
+    let has_heavy_datastructure = detect_heavy_datastructure(source, lang);
+    let has_modulo_arithmetic = detect_modulo_arithmetic(source);
+    let has_graph_adjacency = detect_graph_adjacency(source);
+
+    let (
+        total_functions,
+        total_calls,
+        total_subscripts,
+        total_2d_subscripts,
+        total_arithmetic_ops,
+        has_bitmask_found,
+        max_integer_constant,
+        ast_node_count,
+        ast_depth,
+    ) = compute_ast_metrics(root, lang, source);
+
+    let has_bitmask_ops = has_bitmask_found || detect_bitmask_text(source);
+
+    let source_loc = source.lines().filter(|l| !l.trim().is_empty()).count() as u32;
+    let source_chars = source.len() as u32;
 
     Features {
         nesting_depth,
+        max_loop_depth,
+        total_loops,
         cyclomatic_complexity,
         is_recursive,
+        recursive_call_count,
         large_alloc_flag,
+        has_fast_io,
+        has_heavy_datastructure,
+        has_modulo_arithmetic,
+        has_bitmask_ops,
+        has_graph_adjacency,
+        total_functions,
+        total_calls,
+        total_subscripts,
+        total_2d_subscripts,
+        total_arithmetic_ops,
+        max_integer_constant,
+        ast_node_count,
+        ast_depth,
+        source_loc,
+        source_chars,
         parse_error_flag,
         error_node_count,
     }
@@ -165,6 +234,261 @@ fn is_else_if_continuation(node: Node, lang: Language) -> bool {
 }
 
 // ---------------------------------------------------------------------------
+// loop metrics (max_loop_depth and total_loops)
+// ---------------------------------------------------------------------------
+
+fn is_loop_node(node: Node, lang: Language) -> bool {
+    match lang {
+        Language::C | Language::Cpp => matches!(
+            node.kind(),
+            "for_statement" | "while_statement" | "do_statement" | "for_range_loop"
+        ),
+        Language::Java => matches!(
+            node.kind(),
+            "for_statement" | "enhanced_for_statement" | "while_statement" | "do_statement"
+        ),
+        Language::Python => matches!(node.kind(), "for_statement" | "while_statement"),
+    }
+}
+
+fn compute_loop_metrics(root: Node, lang: Language) -> (u32, u32) {
+    let mut max_depth = 0u32;
+    let mut total_loops = 0u32;
+    walk_loop_nesting(root, 0, lang, &mut max_depth, &mut total_loops);
+    (max_depth, total_loops)
+}
+
+fn walk_loop_nesting(node: Node, depth: u32, lang: Language, max: &mut u32, total: &mut u32) {
+    let is_loop = is_loop_node(node, lang);
+    let child_depth = if is_loop {
+        *total += 1;
+        *max = (*max).max(depth + 1);
+        depth + 1
+    } else {
+        depth
+    };
+
+    let mut cursor = node.walk();
+    for child in node.children(&mut cursor) {
+        walk_loop_nesting(child, child_depth, lang, max, total);
+    }
+}
+
+// ---------------------------------------------------------------------------
+// AST structure metrics (functions, calls, subscripts, 2D access, arithmetic, constants)
+// ---------------------------------------------------------------------------
+
+fn compute_ast_metrics(
+    root: Node,
+    lang: Language,
+    source: &str,
+) -> (u32, u32, u32, u32, u32, bool, u64, u32, u32) {
+    let bytes = source.as_bytes();
+    let mut total_functions = 0u32;
+    let mut total_calls = 0u32;
+    let mut total_subscripts = 0u32;
+    let mut total_2d_subscripts = 0u32;
+    let mut total_arithmetic_ops = 0u32;
+    let mut has_bitmask_found = false;
+    let mut max_integer_constant = 0u64;
+    let mut ast_node_count = 0u32;
+    let mut max_ast_depth = 0u32;
+
+    let mut stack = vec![(root, 1u32)];
+    while let Some((node, depth)) = stack.pop() {
+        ast_node_count += 1;
+        max_ast_depth = max_ast_depth.max(depth);
+
+        let kind = node.kind();
+
+        // Track maximum numeric constants
+        match kind {
+            "number_literal"
+            | "decimal_integer_literal"
+            | "integer"
+            | "decimal_float_literal"
+            | "hex_integer_literal" => {
+                if let Ok(text) = node.utf8_text(bytes) {
+                    if let Some(val) = parse_num(text) {
+                        if val != 1_000_000_007
+                            && val != 998_244_353
+                            && val != 1_000_000_009
+                            && val != 0x3f3f3f3f
+                            && val != 0x7fffffff
+                            && val < (1u64 << 62)
+                        {
+                            max_integer_constant = max_integer_constant.max(val);
+                        }
+                    }
+                }
+            }
+            "binary_expression" | "binary_operator" => {
+                if let Some(op_node) = node.child_by_field_name("operator") {
+                    if let Ok(op) = op_node.utf8_text(bytes) {
+                        match op {
+                            "+" | "-" | "*" | "/" | "%" => total_arithmetic_ops += 1,
+                            "<<" | ">>" | "&" | "|" | "^" => has_bitmask_found = true,
+                            _ => {}
+                        }
+                    }
+                }
+            }
+            _ => {}
+        }
+
+        match lang {
+            Language::C | Language::Cpp => match kind {
+                "function_definition" => total_functions += 1,
+                "call_expression" => total_calls += 1,
+                "subscript_expression" => {
+                    total_subscripts += 1;
+                    if let Some(arg) = node.child_by_field_name("argument") {
+                        if arg.kind() == "subscript_expression" {
+                            total_2d_subscripts += 1;
+                        }
+                    }
+                }
+                _ => {}
+            },
+            Language::Java => match kind {
+                "method_declaration" | "constructor_declaration" => total_functions += 1,
+                "method_invocation" | "constructor_invocation" => total_calls += 1,
+                "array_access" => {
+                    total_subscripts += 1;
+                    if let Some(arr) = node.child_by_field_name("array") {
+                        if arr.kind() == "array_access" {
+                            total_2d_subscripts += 1;
+                        }
+                    }
+                }
+                _ => {}
+            },
+            Language::Python => match kind {
+                "function_definition" => total_functions += 1,
+                "call" => total_calls += 1,
+                "subscript" => {
+                    total_subscripts += 1;
+                    if let Some(val) = node.child_by_field_name("value") {
+                        if val.kind() == "subscript" {
+                            total_2d_subscripts += 1;
+                        }
+                    }
+                }
+                _ => {}
+            },
+        }
+
+        let mut cursor = node.walk();
+        for child in node.children(&mut cursor) {
+            stack.push((child, depth + 1));
+        }
+    }
+
+    (
+        total_functions,
+        total_calls,
+        total_subscripts,
+        total_2d_subscripts,
+        total_arithmetic_ops,
+        has_bitmask_found,
+        max_integer_constant,
+        ast_node_count,
+        max_ast_depth,
+    )
+}
+
+fn detect_modulo_arithmetic(source: &str) -> bool {
+    source.contains("1000000007")
+        || source.contains("998244353")
+        || source.contains("1000000009")
+        || source.contains("1e9 + 7")
+        || source.contains("1e9+7")
+        || source.contains("% MOD")
+        || source.contains("% mod")
+        || source.contains("pow_mod")
+}
+
+fn detect_graph_adjacency(source: &str) -> bool {
+    source.contains("adj[")
+        || source.contains("head[")
+        || source.contains("visited[")
+        || source.contains("edges[")
+        || source.contains("vector<int> adj")
+        || source.contains("vector<edge>")
+        || source.contains("vector<pair")
+        || source.contains("List<Integer>[]")
+        || source.contains("ArrayList[]")
+}
+
+fn detect_bitmask_text(source: &str) -> bool {
+    source.contains("1 <<")
+        || source.contains("1<<")
+        || source.contains("__builtin_popcount")
+        || source.contains("__builtin_clz")
+        || source.contains(".bit_count()")
+}
+
+fn detect_fast_io(source: &str, lang: Language) -> bool {
+    match lang {
+        Language::C => source.contains("getchar_unlocked") || source.contains("fread") || source.contains("fwrite"),
+        Language::Cpp => {
+            source.contains("sync_with_stdio")
+                || source.contains("cin.tie")
+                || source.contains("getchar_unlocked")
+                || source.contains("fread")
+        }
+        Language::Java => {
+            source.contains("BufferedReader")
+                || source.contains("StringTokenizer")
+                || source.contains("FastScanner")
+                || source.contains("FastReader")
+                || source.contains("CustomScanner")
+        }
+        Language::Python => {
+            source.contains("stdin.readline")
+                || source.contains("stdin.read")
+                || source.contains("stdout.write")
+        }
+    }
+}
+
+fn detect_heavy_datastructure(source: &str, lang: Language) -> bool {
+    match lang {
+        Language::C => source.contains("qsort") || source.contains("bsearch"),
+        Language::Cpp => {
+            source.contains("unordered_map")
+                || source.contains("unordered_set")
+                || source.contains("priority_queue")
+                || source.contains("bitset")
+                || source.contains("multiset")
+                || source.contains("map<")
+                || source.contains("set<")
+                || source.contains("vector<vector")
+        }
+        Language::Java => {
+            source.contains("BigInteger")
+                || source.contains("BigDecimal")
+                || source.contains("PriorityQueue")
+                || source.contains("HashMap")
+                || source.contains("HashSet")
+                || source.contains("TreeMap")
+                || source.contains("TreeSet")
+                || source.contains("ArrayDeque")
+        }
+        Language::Python => {
+            source.contains("defaultdict")
+                || source.contains("Counter")
+                || source.contains("heapq")
+                || source.contains("permutations")
+                || source.contains("combinations")
+                || source.contains("bisect")
+                || source.contains("deque")
+                || source.contains("math.comb")
+        }
+    }
+}
+
+// ---------------------------------------------------------------------------
 // cyclomatic_complexity
 // ---------------------------------------------------------------------------
 
@@ -209,24 +533,20 @@ fn count_decision_points(root: Node, source: &str) -> u32 {
 }
 
 // ---------------------------------------------------------------------------
-// is_recursive
+// is_recursive & recursive_call_count
 // ---------------------------------------------------------------------------
 
-/// Detect direct recursion: any function calling ITSELF by name inside its own
-/// body.
-///
-/// KNOWN LIMITATION: mutual recursion (A calls B, B calls A) is intentionally
-/// out of scope for this version. Indirect/self-calls through pointers,
-/// function objects, or `obj.method()` on another object are also not flagged.
-fn detect_recursion(root: Node, lang: Language, source: &str) -> bool {
-    match lang {
+/// Detect direct recursion and count self-call sites across function bodies.
+fn detect_recursion_with_count(root: Node, lang: Language, source: &str) -> (bool, u32) {
+    let count = match lang {
         Language::C | Language::Cpp => detect_recursion_c_like(root, source),
         Language::Java => detect_recursion_java(root, source),
         Language::Python => detect_recursion_python(root, source),
-    }
+    };
+    (count > 0, count)
 }
 
-fn detect_recursion_c_like(root: Node, source: &str) -> bool {
+fn detect_recursion_c_like(root: Node, source: &str) -> u32 {
     let bytes = source.as_bytes();
     let mut functions: Vec<(String, Node)> = Vec::new();
     for_each_node(root, |n| {
@@ -237,31 +557,25 @@ fn detect_recursion_c_like(root: Node, source: &str) -> bool {
         }
     });
 
+    let mut total_calls = 0u32;
     for (name, fn_node) in functions {
         let Some(body) = fn_node.child_by_field_name("body") else {
             continue;
         };
-        let mut found = false;
         for_each_node(body, |m| {
-            if found {
-                return;
-            }
             if m.kind() == "call_expression" {
                 let callee = m.child_by_field_name("function");
                 let is_direct = callee.map(|c| c.kind() == "identifier").unwrap_or(false);
                 if is_direct {
                     let callee_text = callee.and_then(|c| c.utf8_text(bytes).ok()).unwrap_or("");
                     if callee_text == name {
-                        found = true;
+                        total_calls += 1;
                     }
                 }
             }
         });
-        if found {
-            return true;
-        }
     }
-    false
+    total_calls
 }
 
 /// Extract the name of a C/C++ function definition. The name is the base
@@ -278,13 +592,6 @@ fn c_like_function_name(fn_node: Node, bytes: &[u8]) -> Option<String> {
 }
 
 /// Walk through declarator wrappers down to the base identifier.
-///
-/// Accepts both `identifier` (free functions, and method names that happen to
-/// parse as plain identifiers) and `field_identifier` (in-class C++ methods:
-/// the tree-sitter-cpp grammar names `void rec(int n) {}` inside a class with
-/// a `field_identifier`, not an `identifier`). Without this, in-class method
-/// names were never extracted, so a method calling itself by bare name was
-/// never flagged as recursive.
 fn base_identifier(mut node: Node) -> Option<Node> {
     loop {
         match node.kind() {
@@ -297,7 +604,7 @@ fn base_identifier(mut node: Node) -> Option<Node> {
     }
 }
 
-fn detect_recursion_java(root: Node, source: &str) -> bool {
+fn detect_recursion_java(root: Node, source: &str) -> u32 {
     let bytes = source.as_bytes();
     let mut methods: Vec<(String, Node)> = Vec::new();
     for_each_node(root, |n| {
@@ -312,43 +619,33 @@ fn detect_recursion_java(root: Node, source: &str) -> bool {
         }
     });
 
+    let mut total_calls = 0u32;
     for (name, method) in methods {
         let Some(body) = method.child_by_field_name("body") else {
             continue;
         };
-        let mut found = false;
         for_each_node(body, |m| {
-            if found {
-                return;
-            }
             if m.kind() == "method_invocation" {
                 let invoked = m
                     .child_by_field_name("name")
                     .and_then(|c| c.utf8_text(bytes).ok())
                     .unwrap_or("");
                 if invoked == name {
-                    // Direct self-call: no explicit receiver, or receiver is
-                    // `this`. Calling the same method name on some other object
-                    // is NOT self-recursion and is excluded (mutual / indirect
-                    // calls are out of scope).
                     let external_receiver = m
                         .child_by_field_name("object")
                         .map(|o| o.utf8_text(bytes).map(|t| t != "this").unwrap_or(true))
                         .unwrap_or(false);
                     if !external_receiver {
-                        found = true;
+                        total_calls += 1;
                     }
                 }
             }
         });
-        if found {
-            return true;
-        }
     }
-    false
+    total_calls
 }
 
-fn detect_recursion_python(root: Node, source: &str) -> bool {
+fn detect_recursion_python(root: Node, source: &str) -> u32 {
     let bytes = source.as_bytes();
     let mut functions: Vec<(String, Node)> = Vec::new();
     for_each_node(root, |n| {
@@ -363,31 +660,25 @@ fn detect_recursion_python(root: Node, source: &str) -> bool {
         }
     });
 
+    let mut total_calls = 0u32;
     for (name, fn_node) in functions {
         let Some(body) = fn_node.child_by_field_name("body") else {
             continue;
         };
-        let mut found = false;
         for_each_node(body, |m| {
-            if found {
-                return;
-            }
             if m.kind() == "call" {
                 let callee = m.child_by_field_name("function");
                 let is_direct = callee.map(|c| c.kind() == "identifier").unwrap_or(false);
                 if is_direct {
                     let callee_text = callee.and_then(|c| c.utf8_text(bytes).ok()).unwrap_or("");
                     if callee_text == name {
-                        found = true;
+                        total_calls += 1;
                     }
                 }
             }
         });
-        if found {
-            return true;
-        }
     }
-    false
+    total_calls
 }
 
 // ---------------------------------------------------------------------------
