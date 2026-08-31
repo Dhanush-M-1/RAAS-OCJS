@@ -1,0 +1,5 @@
+n, k = map(int, input().split())
+a = sorted(map(int, input().split()))
+q = a.pop()
+while k % q: q = a.pop()
+print(k // q)

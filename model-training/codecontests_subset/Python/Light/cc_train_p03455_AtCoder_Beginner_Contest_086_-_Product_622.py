@@ -1,0 +1,1 @@
+a,b=input().split();print('EOvdedn'[eval(a+'*'+b)%2!=0::2])

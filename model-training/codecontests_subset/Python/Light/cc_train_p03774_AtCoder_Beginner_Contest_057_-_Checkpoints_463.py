@@ -1,0 +1,2 @@
+N,M=map(int,input().split());A=[map(int,input().split())for _ in range(N)];C=[list(map(int,input().split()))for _ in range(M)]
+for a,b in A:print(min([(i,abs(c-a)+abs(d-b))for i,(c,d)in enumerate(C,1)],key=lambda x:x[1])[0])

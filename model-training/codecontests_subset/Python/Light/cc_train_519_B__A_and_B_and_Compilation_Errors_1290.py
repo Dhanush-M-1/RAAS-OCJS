@@ -1,0 +1,6 @@
+n = input()
+s1 = sum(int(i) for i in input().split())
+s2 = sum(int(i) for i in input().split())
+s3 = sum(int(i) for i in input().split())
+print(s1-s2)
+print(s2-s3)

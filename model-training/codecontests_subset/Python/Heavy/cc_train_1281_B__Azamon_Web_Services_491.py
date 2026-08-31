@@ -1,0 +1,31 @@
+t=int(input())
+while(t>0):
+    lst=input().split()
+    s=lst[0]
+    slst=list()
+    nnn=0
+    for ppp in s:
+        slst.append(ppp)
+    c=lst[1]
+    x=''.join(sorted(s))
+    newl=''
+    i=0
+    count=0;
+    while(i<len(s)):
+        if(slst[i]!=x[i]):
+            letter=slst[i]
+            kkk=0
+            while(kkk<len(slst)):
+                if(slst[kkk]==x[i]):
+                    indi=kkk
+                kkk=kkk+1
+            slst[i]=x[i]
+            slst[indi]=letter
+            break
+        i=i+1
+    newl=''.join(slst)
+    if(newl<c):
+        print(newl)
+    else:
+        print('---')
+    t=t-1

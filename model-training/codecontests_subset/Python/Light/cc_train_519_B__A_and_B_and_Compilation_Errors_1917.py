@@ -1,0 +1,19 @@
+n=int(input())
+l=input()
+l=l.split()
+m=input()
+m=m.split()
+m.append('0')
+p=input()
+p=p.split()
+p.append('0')
+p.append('0')
+s1=0
+s2=0
+s3=0
+for i in range(len(l)):
+    s1+=int(l[i])
+    s2+=int(m[i])
+    s3+=int(p[i])
+print(s1-s2)
+print(s2-s3)

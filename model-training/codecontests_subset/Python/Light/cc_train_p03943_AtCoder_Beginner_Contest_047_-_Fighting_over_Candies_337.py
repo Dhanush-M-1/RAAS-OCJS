@@ -1,0 +1,1 @@
+a,b,c=map(int,input().split());print("NYoe s"[(a+b+c)/2 in[a,b,c]::2])

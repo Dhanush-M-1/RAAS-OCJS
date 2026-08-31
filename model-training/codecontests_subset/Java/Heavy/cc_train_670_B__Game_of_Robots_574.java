@@ -1,0 +1,43 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+
+
+public class B670 {
+	public static void main(String[] args) {
+		MyScanner scan = new MyScanner();
+		
+		int N = scan.nextInt(), K = scan.nextInt();
+		int[] list = new int[N];
+		for(int i=0;i<N;i++)list[i] = scan.nextInt();
+		
+		
+		for(int i=1;i<1000000000;i++){
+			if(i>=K)break;
+			K-=i;
+		}
+		System.out.println(list[K-1]);
+		
+	}
+	private static class MyScanner {
+		BufferedReader br;
+		StringTokenizer st;
+		public MyScanner() {
+			br = new BufferedReader(new InputStreamReader(System.in));
+		}
+		String next(){
+			while(st==null||!st.hasMoreElements()){
+				try{st = new StringTokenizer(br.readLine());}
+				catch(IOException e){e.printStackTrace();}
+			}
+			return st.nextToken();
+		}
+		int nextInt() {
+			return Integer.parseInt(next());
+		}
+		long nextLong() {
+			return Long.parseLong(next());
+		}
+	}
+}

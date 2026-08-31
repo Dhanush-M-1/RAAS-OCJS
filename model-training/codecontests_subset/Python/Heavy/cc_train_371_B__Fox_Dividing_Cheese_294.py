@@ -1,0 +1,54 @@
+def to_list(s):
+    return list(map(lambda x: int(x), s.split(' ')))
+
+def solve(a,b):
+    init_a = a
+    init_b = b
+    if a == b:
+        return 0
+
+    a_count = 0
+    b_count = 0
+    count = 0
+    for i in [2,3,5]:#range(2,max(int(a**0.5 + 1), int(b**0.5+1))):
+        while (a % i == 0) & (b % i == 0):
+            #print('init_a',a)
+            #print('init_b',b)
+            a /= i
+            b /= i
+            count += 1
+            #print(a,b,'after. a, b')
+        while (a % i == 0):
+            a /= i
+            a_count += 1
+            #print(a,'a')
+        while (b % i == 0):
+            b /= i
+            b_count += 1
+            #print(b)
+        if a == b:
+            count += 1
+#         print(a,b)
+#     if a >= 2:
+#         a_count += 1
+#     if b >= 2:
+#         b_count += 1
+#     if a != b:
+#         if a > 2:
+#             a_count += 1
+#         if b > 2:
+#             b_count += 1
+    
+    if (init_a == 1) & (((b%2==0)&(b%3==0)&(b%5==0)) | (b==1)):
+        return b_count
+    if (init_b == 1) & (((a%2==0)&(a%3==0)&(a%5==0)) | (a==1)):
+        return a_count
+    if count == 0:
+        return -1
+    else:
+        if ((a_count == 0) | (b_count == 0)) & (init_a % init_b != 0) & (init_b % init_a != 0):
+            return -1
+        return a_count + b_count
+
+a,b = to_list(input())
+print(solve(a,b))

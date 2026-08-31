@@ -1,0 +1,10 @@
+N,M = map(int,input().split())
+A= set(int(input()) for _ in [0]*M)
+mod = 10**9+7
+dp = [0]*(N+1)
+dp[0] = 1
+if not (1 in A):dp[1] = 1
+for i in range(2,N+1):
+    dp[i] = (dp[i-1]+dp[i-2])%mod
+    if i in A:dp[i]=0
+print(dp[N])

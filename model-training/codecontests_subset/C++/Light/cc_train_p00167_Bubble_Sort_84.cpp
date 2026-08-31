@@ -1,0 +1,2 @@
+#include <stdio.h>
+int main() {int RB[105],N,i,j,ans;while (1) {scanf("%d",&N);if (!N) return 0;for (i=0;i<N;scanf("%d",&RB[i++]));for (i=1,ans=0;i<N;i++) for (j=N-1;j>=i;j--) if (RB[j-1]>RB[j]) ans++,RB[j]+=RB[j-1],RB[j-1]=RB[j]-RB[j-1],RB[j]-=RB[j-1];printf("%d\n",ans);}}

@@ -1,0 +1,46 @@
+import sys,os,io
+input = sys.stdin.readline
+#input = io.BytesIO(os.read(0,os.fstat(0).st_size)).readline
+n, k = map(int, input().split())
+MOD = 998244353
+
+fact = [1]*(n+1)
+rfact = [1]*(n+1)
+for i in range(1, n+1):
+  fact[i] = fact[i-1]*i % MOD
+rfact[n] = pow(fact[n], MOD-2, MOD)
+for i in range(n, 0, -1):
+  rfact[i-1] = rfact[i] * i % MOD
+
+# nPk (mod MOD) を求める
+def perm(n, k):
+  return fact[n] * rfact[n-k] % MOD
+
+# nCk (mod MOD) を求める
+def comb(n, k):
+  return fact[n] * rfact[k] * rfact[n-k] % MOD
+
+
+ans = 0
+L,R = [0]*n,[0]*n
+for i in range(n):
+  L[i],R[i] = map(int, input().split())
+compLR = {e: i+1 for i, e in enumerate(sorted(set(L+R)))}
+for i in range(n):
+  L[i] = compLR[L[i]]
+  R[i] = compLR[R[i]]
+on = [0]*(n*2+1)
+off = [0]*(n*2+2)
+for l,r in zip(L,R):
+  on[l] += 1
+  off[r+1] += 1
+cum = 0
+for i in range(1,n*2+1):
+  cum -= off[i]
+  for j in range(1,on[i]+1):
+    old = k-j
+    if 0<=old<=cum:
+      ans += comb(cum,old)*comb(on[i],j)%MOD
+    ans %= MOD
+  cum += on[i]
+print(ans)

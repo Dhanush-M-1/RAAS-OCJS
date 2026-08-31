@@ -1,0 +1,38 @@
+from collections import Counter
+import string
+import bisect
+#import random
+import math
+import sys
+# sys.setrecursionlimit(10**6) 
+from fractions import Fraction
+def array_int():
+    return [int(i) for i in sys.stdin.readline().split()]
+def vary(arrber_of_variables):
+    if arrber_of_variables==1:
+        return int(sys.stdin.readline())
+    if arrber_of_variables>=2:
+        return map(int,sys.stdin.readline().split()) 
+def makedict(var):
+    return dict(Counter(var))
+def lcm(a,b):
+    return (a*b)//math.gcd(a,b)
+testcases=1
+for _ in range(testcases):
+    n=vary(1)
+    if n==1:
+        print(1)
+    elif n==2:
+        print(2)
+    else:
+        if n%2!=0:
+            print(n*(n-1)*(n-2))
+        else:
+            # print(n)
+            # print(lcm(n,n-1))
+            # print(924*923*921)
+            maxi=-1
+            for i in range(n,2,-1):
+                maxi=(max(lcm(lcm(i,i-1),i-2),lcm(lcm(i,i-1),i-3),maxi))
+            print(maxi)
+            

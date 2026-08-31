@@ -1,0 +1,7 @@
+input()
+x=list(map(int,input().split()))
+y=list(map(int,input().split()))
+z=list(map(int,input().split()))
+
+print(sum(x)-sum(y))
+print(sum(y)-sum(z))

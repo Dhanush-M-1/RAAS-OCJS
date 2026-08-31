@@ -1,0 +1,12 @@
+from collections import Counter
+n=int(input())
+l1=list(map(int,input().split()))
+l2=list(map(int,input().split()))
+l3=list(map(int,input().split()))
+c1=Counter(l1)
+c2=Counter(l2)
+c3=Counter(l3)
+l1=list(c1-c2)
+l2=list(c2-c3)
+print(l1[0])
+print(l2[0])

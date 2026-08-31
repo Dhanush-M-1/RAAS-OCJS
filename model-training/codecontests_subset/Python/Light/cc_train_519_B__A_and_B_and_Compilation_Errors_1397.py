@@ -1,0 +1,10 @@
+a = int(input())
+li1= list(map(int, input().split()))
+li2 = list(map(int, input().split()))
+li3 = list(map(int, input().split()))
+x = sum(li1)
+y = sum(li2)
+z  = sum(li3)
+print(x-y)
+print(y-z)
+

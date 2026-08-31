@@ -1,0 +1,16 @@
+#include <bits/stdc++.h>
+using namespace std;
+int a[100001], s[100001], i, j, k, n;
+int main() {
+  cin >> n;
+  for (i = 0; i < n; i++) {
+    cin >> a[i] >> s[i];
+  }
+  for (i = 0; i < n; i++) {
+    for (j = 0; j < n; j++) {
+      if (a[i] == s[j]) k++;
+    }
+  }
+  cout << k;
+  return 0;
+}

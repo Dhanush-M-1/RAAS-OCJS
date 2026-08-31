@@ -1,0 +1,49 @@
+#include <bits/stdc++.h>
+using namespace std;
+int p[300005], far, dist;
+int d[300005];
+vector<int> G[300005];
+void dfs(int v, int fat, int c, int distance = 0) {
+  p[v] = c;
+  if (distance > dist) dist = distance, far = v;
+  for (int x : G[v])
+    if (x != fat) dfs(x, v, c, distance + 1);
+}
+int findp(int a) {
+  if (p[a] == a) return a;
+  return p[a] = findp(p[a]);
+}
+void mergep(int a, int b) {
+  int x = findp(a), y = findp(b);
+  p[x] = y;
+  d[y] = max({d[y], d[x], (d[y] + 1) / 2 + (d[x] + 1) / 2 + 1});
+}
+int main() {
+  int n, m, q, a, b, op;
+  scanf("%d%d%d", &n, &m, &q);
+  while (m--) {
+    scanf("%d%d", &a, &b);
+    G[a].push_back(b);
+    G[b].push_back(a);
+  }
+  for (int i = 1; i <= n; i++) {
+    if (!p[i]) {
+      dist = -1;
+      dfs(i, i, i);
+      dist = -1;
+      dfs(far, far, i);
+      d[i] = dist;
+    }
+  }
+  while (q--) {
+    scanf("%d", &op);
+    if (op == 1) {
+      scanf("%d", &a);
+      printf("%d\n", d[findp(a)]);
+    } else {
+      scanf("%d%d", &a, &b);
+      if (findp(a) != findp(b)) mergep(a, b);
+    }
+  }
+  return 0;
+}

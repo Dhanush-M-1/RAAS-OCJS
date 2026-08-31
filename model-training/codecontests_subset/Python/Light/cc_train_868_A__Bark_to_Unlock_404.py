@@ -1,0 +1,14 @@
+#import sys
+#sys.stdin = open("123.data")
+s = input()
+n = int(input())
+l = []
+for i in range(n):
+	l.append(input())
+for i in range(n):
+	for j in range(n):
+		if l[i][1] + l[j][0] == s or l[i] == s or l[j] == s:
+			print("YES")
+			exit()
+print("NO")
+

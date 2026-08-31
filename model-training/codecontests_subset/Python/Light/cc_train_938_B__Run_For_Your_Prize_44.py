@@ -1,0 +1,1 @@
+input();print(max([min(i-1,10**6-i) for i in map(int,input().split())]))

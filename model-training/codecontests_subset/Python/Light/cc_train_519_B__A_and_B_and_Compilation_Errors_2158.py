@@ -1,0 +1,13 @@
+n = int(input())
+a = input().split(' ')
+b = input().split(' ')
+c = input().split(' ')
+b.append('0')
+c.append('0')
+c.append('0')
+for i in range (n):
+    a[i] = int (a[i])
+    b[i] = int (b[i])
+    c[i] = int (c[i])
+print(sum(a) - sum(b))
+print(sum(b)-sum(c))

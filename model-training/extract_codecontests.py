@@ -29,7 +29,14 @@ def main():
     args = parser.parse_args()
 
     # Clean existing output
-    os.system(f"rm -rf {args.output_dir} {args.manifest}")
+    import shutil
+    if os.path.exists(args.output_dir):
+        shutil.rmtree(args.output_dir, ignore_errors=True)
+    if os.path.exists(args.manifest):
+        try:
+            os.remove(args.manifest)
+        except OSError:
+            pass
 
     os.makedirs(args.output_dir, exist_ok=True)
     for lang in ["C++", "Python", "Java"]:

@@ -1,0 +1,1 @@
+import java.util.*;class Main{public static void main(String[]z){int x=0,y=0,a,b,l;for(Scanner s=new Scanner(System.in);s.hasNext();){z=s.next().split(",");if((a=new Integer(z[0]))*a+(b=new Integer(z[1]))*b==(l=new Integer(z[2]))*l)++x;else if(a==b)++y;}System.out.println(x+"\n"+y);}}

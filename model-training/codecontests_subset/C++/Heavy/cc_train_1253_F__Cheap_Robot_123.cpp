@@ -1,0 +1,97 @@
+#include <bits/stdc++.h>
+const int INF = (int)1e9 + 7;
+const int N = (int)3e5 + 7;
+const int MAXN = (int)5e5 + 228;
+using namespace std;
+int n, m, k, q;
+int came[N];
+long long d[N];
+vector<pair<int, int> > g[N];
+vector<pair<long long, pair<int, int> > > edges;
+void shortest_paths() {
+  set<pair<long long, int> > S;
+  for (int i = 1; i <= k; ++i) {
+    d[i] = 0;
+    came[i] = i;
+    S.insert(make_pair(d[i], i));
+  }
+  for (int i = k + 1; i <= n; ++i) d[i] = (long long)1e18;
+  while (!S.empty()) {
+    int v = S.begin()->second;
+    S.erase(S.begin());
+    for (auto &it : g[v]) {
+      int to = it.first, w = it.second;
+      if (d[to] > d[v] + w) {
+        S.erase(make_pair(d[to], to));
+        d[to] = d[v] + w;
+        came[to] = came[v];
+        S.insert(make_pair(d[to], to));
+      }
+    }
+  }
+}
+void construct() {
+  for (int i = 1; i <= n; ++i) {
+    for (auto &it : g[i]) {
+      int to = it.first;
+      if (came[to] != came[i]) {
+        edges.push_back(
+            make_pair(it.second + d[to] + d[i], make_pair(came[to], came[i])));
+      }
+    }
+  }
+  sort(edges.begin(), edges.end());
+}
+int p[N];
+set<int> queries[N];
+void init() {
+  for (int i = 1; i <= n; ++i) p[i] = i;
+}
+int get(int v) {
+  if (v == p[v]) return v;
+  return p[v] = get(p[v]);
+}
+long long ans[N];
+void unite(int v, int u, long long w) {
+  v = get(v);
+  u = get(u);
+  if (u == v) return;
+  if (queries[v].size() < queries[u].size()) swap(v, u);
+  for (auto &to : queries[u]) {
+    if (queries[v].count(to)) {
+      queries[v].erase(to);
+      ans[to] = w;
+    } else {
+      queries[v].insert(to);
+    }
+  }
+  queries[u].clear();
+  p[u] = v;
+}
+int main() {
+  ios_base::sync_with_stdio(0);
+  cin.tie(0);
+  cin >> n >> m >> k >> q;
+  for (int i = 1; i <= m; ++i) {
+    int x, y, z;
+    cin >> x >> y >> z;
+    g[x].push_back(make_pair(y, z));
+    g[y].push_back(make_pair(x, z));
+  }
+  init();
+  for (int i = 1; i <= q; ++i) {
+    int x, y;
+    cin >> x >> y;
+    queries[x].insert(i);
+    queries[y].insert(i);
+  }
+  shortest_paths();
+  construct();
+  for (auto &to : edges) {
+    int x = to.second.first, y = to.second.second;
+    long long w = to.first;
+    unite(x, y, w);
+  }
+  for (int i = 1; i <= q; ++i) cout << ans[i] << "\n";
+  return 0;
+}

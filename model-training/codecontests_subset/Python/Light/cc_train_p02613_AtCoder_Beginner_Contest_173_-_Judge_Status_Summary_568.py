@@ -1,0 +1,1 @@
+_,*a=open(0);[print(x,"x",a.count(x+"\n"))for x in["AC","WA","TLE","RE"]]

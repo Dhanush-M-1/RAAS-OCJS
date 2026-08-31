@@ -1,0 +1,1 @@
+a,b=map(int,input().split());print(a*b if a-9<1and b-9<1else-1)

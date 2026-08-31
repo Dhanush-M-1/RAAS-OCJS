@@ -1,0 +1,81 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.StringTokenizer;
+
+public class Main {
+	public static void main(String[] args) {
+		FastReader sc = new FastReader();
+		int n = sc.nextInt();
+		int s = sc.nextInt();
+		int a[] = new int[n];
+		for(int i=0;i<n;i++) {
+			a[i] = sc.nextInt();
+		}
+		Arrays.sort(a);
+		long firstHalf =0,secondHalf=0;
+		for(int i=0;i<n/2;i++) {
+			if(a[i]>s) firstHalf += a[i]-s;
+			if(a[n-1-i]<s) secondHalf+=s-a[n-1-i];
+		}
+		System.out.println(firstHalf+secondHalf+Math.abs(a[n/2]-s));
+	}
+}
+
+class FastReader
+{
+	BufferedReader br;
+	StringTokenizer st;
+
+	public FastReader()
+	{
+		br = new BufferedReader(new
+				InputStreamReader(System.in));
+	}
+
+	String next()
+	{
+		while (st == null || !st.hasMoreElements())
+		{
+			try
+			{
+				st = new StringTokenizer(br.readLine());
+			}
+			catch (IOException  e)
+			{
+				e.printStackTrace();
+			}
+		}
+		return st.nextToken();
+	}
+
+	int nextInt()
+	{
+		return Integer.parseInt(next());
+	}
+
+	long nextLong()
+	{
+		return Long.parseLong(next());
+	}
+
+	double nextDouble()
+	{
+		return Double.parseDouble(next());
+	}
+
+	String nextLine()
+	{
+		String str = "";
+		try
+		{
+			str = br.readLine();
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		return str;
+	}
+}

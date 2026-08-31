@@ -1,0 +1,11 @@
+#include <bits/stdc++.h>
+using namespace std;
+int s;
+int main() {
+  for (int i = 0; i < 5; ++i) {
+    int a;
+    cin >> a;
+    s += a;
+  }
+  cout << ((s % 5 == 0 && s > 0) ? s / 5 : -1) << endl;
+}

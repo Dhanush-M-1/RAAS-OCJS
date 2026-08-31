@@ -1,0 +1,1 @@
+input(); a,b,c=eval("sum(map(int, input().split())),"*3);print(a-b, b-c,sep='\n')

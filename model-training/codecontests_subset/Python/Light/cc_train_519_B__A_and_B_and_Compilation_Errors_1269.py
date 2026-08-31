@@ -1,0 +1,6 @@
+input()
+a=list(map(int,input().split()))
+b=list(map(int,input().split()))
+c=list(map(int,input().split()))
+print(sum(i for i in a)-sum(i for i in b))
+print(sum(i for i in b)-sum(i for i in c))

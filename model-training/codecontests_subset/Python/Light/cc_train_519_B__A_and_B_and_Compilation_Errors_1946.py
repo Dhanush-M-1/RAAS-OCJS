@@ -1,0 +1,6 @@
+n= int(input())
+a= sorted(list(map(int,input().split())))
+b= sorted(list(map(int,input().split())))
+c= sorted(list(map(int,input().split())))
+print(sum(a)-sum(b))
+print(sum(b)-sum(c))

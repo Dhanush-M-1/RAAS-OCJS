@@ -1,0 +1,32 @@
+t=int(input())
+for _ in range(t):
+    n=int(input())
+    prev1=0
+    prev2=0
+    flag=0
+    for __ in range(n):
+        a,b=map(int,input().split())
+        if(flag!=1):
+            if(a<prev1):
+                print("NO")
+                flag=1
+                continue
+            elif(a>prev1):
+                no=a-prev1
+                if(b>prev2+no):
+                    flag=1
+                    print("NO")
+                    continue
+                if(b<prev2):
+                    flag=1
+                    print("NO")
+                    continue
+            else:
+                if(prev2!=b):
+                    flag=1
+                    print("NO")
+                    continue
+        prev1=a
+        prev2=b
+    if(flag!=1):
+        print("YES")

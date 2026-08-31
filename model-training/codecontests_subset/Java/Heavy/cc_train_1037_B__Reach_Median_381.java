@@ -1,0 +1,82 @@
+import java.io.*;
+import java.util.*;
+import java.lang.*;
+import static java.lang.Math.*;
+
+// Sachin_2961 submission //
+public class Codeforces {
+    public void solve() {
+        int n = fs.nInt(), s = fs.nInt();
+        long[]ar = new long[n];
+        for(int i=0;i<n;i++)
+            ar[i] = fs.nLong();
+
+        Arrays.sort(ar);
+        long l = 0,r=0;
+        for(int i=0;i<n/2;i++){
+            if( ar[i] > s )l += ar[i]-s;
+            if( ar[n-i-1] < s ) r+= s-ar[n-i-1];
+        }
+        long ans = l + r + abs(ar[n/2]-s);
+        out.println(ans);
+    }
+    static boolean multipleTestCase = false; static FastScanner fs; static PrintWriter out;
+    public void run(){
+        fs = new FastScanner();
+        out = new PrintWriter(System.out);
+        int tc = (multipleTestCase)?fs.nInt():1;
+        while (tc-->0)solve();
+        out.flush();
+        out.close();
+    }
+    public static void main(String[]args){
+        try{
+            new Codeforces().run();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
+    static class FastScanner {
+        BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st=new StringTokenizer("");
+        String n() {
+            while (!st.hasMoreTokens())
+                try {
+                    st=new StringTokenizer(br.readLine());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            return st.nextToken();
+        }
+        String Line()
+        {
+            String str = "";
+            try
+            {
+                str = br.readLine();
+            }catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+            return str;
+        }
+        int nInt() {return Integer.parseInt(n()); }
+        long nLong() {return Long.parseLong(n());}
+        double nDouble(){return Double.parseDouble(n());}
+        int[]aI(int n){
+            int[]ar = new int[n];
+            for(int i=0;i<n;i++)
+                ar[i] = nInt();
+            return ar;
+        }
+    }
+    public static void sort(int[] arr){
+        ArrayList<Integer> ls = new ArrayList<Integer>();
+        for(int x: arr)
+            ls.add(x);
+        Collections.sort(ls);
+        for(int i=0; i < arr.length; i++)
+            arr[i] = ls.get(i);
+    }
+}

@@ -1,0 +1,24 @@
+S=input()
+a=S[0]
+b=S[1]
+T=int(input())
+k=0
+j=0
+m=0
+while(T>0):
+  R=input()
+  N=len(R)
+  if(R[0]==S[1]):
+    j=j+1
+  if(R[N-1]==S[0]):
+    k=k+1
+  if(S==R):
+    m=1
+  T=T-1
+if(m==1):
+  print("YES")
+else:
+  if(j!=0 and k!=0):
+    print("YES")
+  else:
+    print("NO")

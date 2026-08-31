@@ -1,0 +1,10 @@
+n=int(input())
+a=[]
+a=list(map(int,input().split()))
+b=list(map(int,input().split()))
+c=list(map(int,input().split()))
+s=sum(a)
+s1=sum(b)
+s2=sum(c)
+print(s-s1)
+print(s1-s2)

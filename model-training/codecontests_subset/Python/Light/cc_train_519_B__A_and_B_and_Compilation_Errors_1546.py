@@ -1,0 +1,6 @@
+I=lambda: sum(list(map(int,input().split())))
+I()
+n=I()
+s=I()
+f=I()
+print(n-s,s-f)

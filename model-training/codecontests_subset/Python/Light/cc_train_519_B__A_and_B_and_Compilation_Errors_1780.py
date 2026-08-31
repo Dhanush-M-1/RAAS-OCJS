@@ -1,0 +1,5 @@
+n=int(input())
+l1=list(map(int,input().split()[:n]))
+l2=list(map(int,input().split()[:n-1]))
+l3=list(map(int,input().split()[:n-2]))
+print(sum(l1)-sum(l2),sum(l2)-sum(l3))

@@ -1,0 +1,6 @@
+ini_errors = int(input())
+data1 = list(map(int,input().split()))
+data2 = list(map(int,input().split()))
+data3 = list(map(int,input().split()))
+print(sum(data1)-sum(data2))
+print(sum(data2)-sum(data3))

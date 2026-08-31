@@ -1,0 +1,13 @@
+# get first two victims and number of days
+v1, v2 = [x for x in input().split(' ')]
+n = int(input())
+
+print(v1 + ' ' + v2)
+
+for i in range(n):
+    murd, repl = [x for x in input().split(' ')]
+    if v1 == murd:
+        v1 = repl
+    else:
+        v2 = repl
+    print(v1 + ' ' + v2)

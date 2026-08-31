@@ -1,0 +1,32 @@
+testcase=int(input())
+while(testcase):
+    testcase-=1
+    n=int(input())
+    m=n
+    if(n==1):
+        print("0")
+        continue
+    if(n%3!=0):
+        print("-1")
+        continue
+    three,two=0,0
+    while(n%2==0):
+        n=n//2
+        two+=1
+    while(n%3==0):
+        n=n//3
+        three+=1
+    flag=False
+    if(n!=1):
+        print("-1")
+        continue
+    else:
+        if(three<two):
+            print("-1")
+            continue
+        elif(three==two):
+            print(three)
+            continue
+        else:
+            print(three+three-two)
+            continue

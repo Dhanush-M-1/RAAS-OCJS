@@ -1,0 +1,5 @@
+input()
+A = sum([int(a) for a in input().split()])
+B = sum([int(b) for b in input().split()])
+C = sum([int(c) for c in input().split()])
+print(f"{A - B}\n{B - C}")

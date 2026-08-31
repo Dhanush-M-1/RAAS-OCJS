@@ -1,0 +1,40 @@
+n=int(input())
+a=list(map(int,input().split()))
+a.sort()
+o=[]
+e=[]
+for i in range(n):
+    if(a[i]%2==0):
+        e.append(a[i])
+    else:
+        o.append(a[i])
+c=1
+lo=len(o)
+le=len(e)
+if(len(o)>=len(e)):
+    o.pop()
+    lo-=1
+    c=1
+else:
+    e.pop()
+    c=0
+    le-=1
+while(1):
+    if(c==1):
+        if(le):
+            e.pop()
+            le-=1
+            c=0
+        else:
+            break
+    else:
+        if(lo):
+            o.pop()
+            lo-=1
+            c=1
+        else:
+            break
+ans=0
+ans+=sum(o)
+ans+=sum(e)
+print(ans)

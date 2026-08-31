@@ -1,0 +1,47 @@
+a,b=list(map(int,input().split()))
+if(a==b):
+    print(0)
+else:
+    d1={2:0,3:0,5:0}
+    d2={2:0,3:0,5:0}
+    f1=0
+    f2=0
+    while(a>1):
+        if(a%2==0):
+            a=a//2
+            d1[2]+=1
+        elif(a%3==0):
+            a=a//3
+            d1[3]+=1
+        elif(a%5==0):
+            a=a//5
+            d1[5]+=1
+        else:
+            f1=1
+            break
+    while(b>1):
+        if(b%2==0):
+            b=b//2
+            d2[2]+=1
+        elif(b%3==0):
+            b=b//3
+            d2[3]+=1
+        elif(b%5==0):
+            b=b//5
+            d2[5]+=1
+        else:
+            f2=1
+            break
+    if(a!=b):
+        print(-1)
+    else:
+        t1=0
+        if(d1[2]!=d2[2]):
+            t1+=abs(d1[2]-d2[2])
+        if(d1[3]!=d2[3]):
+            t1+=abs(d2[3]-d1[3])
+        if(d1[5]!=d2[5]):
+            t1+=abs(d2[5]-d1[5])
+        print(t1)
+    
+        

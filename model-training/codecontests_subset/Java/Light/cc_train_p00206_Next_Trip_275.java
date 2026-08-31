@@ -1,0 +1,1 @@
+import java.util.*;class Main{public static void main(String[]z){Scanner s=new Scanner(System.in);String r;for(int m,t;(m=s.nextInt())>0;System.out.println(r))for(r="NA",t=0;t++<12;)if((m-=s.nextInt()-s.nextInt())<=0&&r=="NA")r=""+t;}}

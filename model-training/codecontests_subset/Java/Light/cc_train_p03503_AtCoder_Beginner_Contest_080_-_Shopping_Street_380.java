@@ -1,0 +1,297 @@
+
+import java.util.Scanner;
+
+public class Main {
+
+	public static void main(String[] args) {
+		//		new Main().solveA();
+		//		new Main().solveB();
+		//		new Main().solveC();
+		//		new Main().solveC2();
+		new Main().solveC3();
+		// new Main().solveD();
+	}
+
+	private void solveA() {
+		Scanner scanner = null;
+		int numN = 0;
+		int numA = 0;
+		int numB = 0;
+
+		try {
+			scanner = new Scanner(System.in);
+			numN = scanner.nextInt();
+			numA = scanner.nextInt();
+			numB = scanner.nextInt();
+
+			System.out.println(Math.min(numA * numN, numB));
+
+		} finally {
+			if (scanner != null) {
+				scanner.close();
+			}
+		}
+	}
+
+	private int addAllDigit(int num) {
+		if (num < 10) {
+			return num;
+		}
+		return addAllDigit(num / 10) + num % 10;
+	}
+
+	private void solveB() {
+		Scanner scanner = null;
+		int numN = 0;
+
+		try {
+			scanner = new Scanner(System.in);
+			numN = scanner.nextInt();
+
+			int res = addAllDigit(numN);
+
+			if (numN % res == 0) {
+				System.out.println("Yes");
+			} else {
+				System.out.println("No");
+
+			}
+
+		} finally {
+			if (scanner != null) {
+				scanner.close();
+			}
+		}
+	}
+
+	/**
+	 * DFS
+	 */
+	private void solveC3() {
+
+		try (Scanner scanner = new Scanner(System.in)) {
+
+			int numN = scanner.nextInt();
+
+			int[][] shop = new int[numN][10];
+			int[][] rieki = new int[numN][11];
+
+			for (int j = 0; j < numN; j++) {
+				for (int k = 0; k < 10; k++) {
+					shop[j][k] = scanner.nextInt();
+				}
+			}
+
+			for (int j = 0; j < numN; j++) {
+				for (int k = 0; k < 11; k++) {
+					rieki[j][k] = scanner.nextInt();
+				}
+			}
+			/*
+			 * DFSで調べる
+			 * joisinoShop => joisinoお姉ちゃんがopenする時間帯のmemo
+			 */
+			int res = recursiveCNotUseArray(shop, rieki, 0, 0, numN);
+
+			System.out.println(res);
+
+		}
+	}
+
+	private int recursiveCNotUseArray(int[][] shop, int[][] rieki, int joisinoShop, int currentI, int shopNum) {
+
+		/*
+		 * お店のopen時間は10種類
+		 * currentI>=10になったので、joisinoShopを埋め終わりOpenする時間帯を決定した。
+		 * 利益計算
+		 */
+		if (currentI >= 10) {
+			/*
+			 * 何処もopenしないのはNG
+			 * 利益を最低にする
+			 */
+			if (joisinoShop == 0) {
+				return Integer.MIN_VALUE;
+			}
+			//どこかの時間帯でopenしているのであれば計算
+			int res = 0;
+			for (int j = 0; j < shop.length; j++) {
+				int cnt = 0;
+				for (int k = 0; k < 10; k++) {
+					if (shop[j][k] == 1 && (joisinoShop & (1 << k)) > 0) {
+						cnt++;
+					}
+				}
+				res += rieki[j][cnt];
+			}
+			return res;
+		}
+		//currentIの時間帯にopenしなかった場合のコスト
+		int val1 = recursiveCNotUseArray(shop, rieki, joisinoShop, currentI + 1, shopNum);
+		//currentIの時間帯にopenした場合のコスト
+		joisinoShop = joisinoShop | (1 << currentI);
+		int val2 = recursiveCNotUseArray(shop, rieki, joisinoShop, currentI + 1, shopNum);
+		//次の探索用にopenフラグを落とす
+		joisinoShop = joisinoShop ^ (1 << currentI);
+		return Integer.max(val1, val2);
+
+	}
+
+	private int recursiveC(int[][] shop, int[][] rieki, int[] joisinoShop, int currentI, int shopNum) {
+
+		/*
+		 * お店のopen時間は10種類
+		 * currentI>=10になったので、joisinoShopを埋め終わりOpenする時間帯を決定した。
+		 * 利益計算
+		 */
+		if (currentI >= 10) {
+			int res = 0;
+			for (int j = 0; j < shop.length; j++) {
+				int cnt = 0;
+				boolean isOpen = false;
+				for (int k = 0; k < 10; k++) {
+					if (shop[j][k] == 1 && joisinoShop[k] == 1) {
+						cnt++;
+					}
+					//どこかの時間帯でopenしているのであればopenフラグON
+					if (joisinoShop[k] == 1 && !isOpen) {
+						isOpen = true;
+					}
+				}
+				/*
+				 * 何処もopenしないのはNG
+				 * 利益を最低にする
+				 */
+				if (!isOpen) {
+					return Integer.MIN_VALUE;
+				}
+				res += rieki[j][cnt];
+			}
+			return res;
+		}
+		//currentIの時間帯にopenしなかった場合のコスト
+		int val1 = recursiveC(shop, rieki, joisinoShop, currentI + 1, shopNum);
+		//currentIの時間帯のopenした場合のコスト
+		joisinoShop[currentI] = 1;
+		int val2 = recursiveC(shop, rieki, joisinoShop, currentI + 1, shopNum);
+		//次の探索用にopenフラグを落とす
+		joisinoShop[currentI] = 0;
+		return Integer.max(val1, val2);
+
+	}
+
+	private void solveC2() {
+
+		try (Scanner scanner = new Scanner(System.in)) {
+
+			int numN = scanner.nextInt();
+
+			int[][] shop = new int[numN][10];
+			int[][] rieki = new int[numN][11];
+
+			for (int j = 0; j < numN; j++) {
+				for (int k = 0; k < 10; k++) {
+					shop[j][k] = scanner.nextInt();
+				}
+			}
+
+			for (int j = 0; j < numN; j++) {
+				for (int k = 0; k < 11; k++) {
+					rieki[j][k] = scanner.nextInt();
+				}
+			}
+			int res = Integer.MIN_VALUE;
+			//0000000000=0、1111111111=1023
+			for (int bit = 1; bit < (1 << 10); bit++) {
+				int wkRes = 0;
+				for (int j = 0; j < shop.length; j++) {
+					int cnt = 0;
+					for (int k = 0; k < 10; k++) {
+						boolean bitFlg = (bit & (1 << k)) > 0;
+						if (shop[j][k] == 1 && bitFlg) {
+							cnt++;
+						}
+					}
+					wkRes += rieki[j][cnt];
+				}
+				res = Math.max(res, wkRes);
+			}
+
+			System.out.println(res);
+
+		}
+	}
+
+	private void solveC() {
+		Scanner scanner = null;
+		int numN = 0;
+
+		try {
+			scanner = new Scanner(System.in);
+			numN = scanner.nextInt();
+
+			int[][] shop = new int[numN][10];
+			int[][] rieki = new int[numN][11];
+
+			for (int j = 0; j < numN; j++) {
+				for (int k = 0; k < 10; k++) {
+					shop[j][k] = scanner.nextInt();
+				}
+			}
+
+			for (int j = 0; j < numN; j++) {
+				for (int k = 0; k < 11; k++) {
+					rieki[j][k] = scanner.nextInt();
+				}
+			}
+			int res = Integer.MIN_VALUE;
+			//0000000000=0、1111111111=1023
+			for (int i = 1; i < 1024; i++) {
+				int wkRes = 0;
+				int[] myShop = new int[10];
+				int wkBit = i;
+				//0000000000から、1111111111までの配列を作成。2の剰余を入れていけば2進数に変換できる。
+				for (int j = 0; j < 10; j++) {
+					myShop[j] = wkBit % 2;
+					wkBit /= 2;
+				}
+				for (int j = 0; j < shop.length; j++) {
+					int cnt = 0;
+					for (int k = 0; k < myShop.length; k++) {
+						if (myShop[k] == shop[j][k] && myShop[k] == 1) {
+							cnt++;
+						}
+					}
+					wkRes += rieki[j][cnt];
+				}
+				res = Math.max(res, wkRes);
+			}
+
+			System.out.println(res);
+
+		} finally {
+			if (scanner != null) {
+				scanner.close();
+			}
+		}
+	}
+
+	private void solveD() {
+		Scanner scanner = null;
+		int lineAB = 0;
+		int lineBC = 0;
+		int lineCA = 0;
+
+		try {
+			scanner = new Scanner(System.in);
+			lineAB = scanner.nextInt();
+
+			System.out.println("");
+
+		} finally {
+			if (scanner != null) {
+				scanner.close();
+			}
+		}
+	}
+}

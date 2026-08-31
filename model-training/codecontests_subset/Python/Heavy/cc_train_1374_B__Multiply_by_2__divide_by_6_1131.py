@@ -1,0 +1,27 @@
+a=int(input())
+for i in range(0,a):
+    n=int(input())
+    tow=0
+    b=n
+    three=0
+    while(n>=1):
+        if(n%3==0):
+            three=three+1 
+            n=n//3
+        elif(n%2==0):
+            tow=tow+1 
+            n=n//2
+        else:
+            break
+    if(n==1):
+        if(b==1):
+            print(0)
+        elif(three>=1):
+            if(tow>three):
+                print(-1)
+            else:
+                print(tow+2*(three-tow))
+        else:
+            print(-1)
+    else:
+        print(-1)

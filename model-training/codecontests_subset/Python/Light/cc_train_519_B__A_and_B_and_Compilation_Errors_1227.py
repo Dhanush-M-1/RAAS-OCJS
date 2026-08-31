@@ -1,0 +1,5 @@
+n = int(input())
+a = sum(map(int, input().rstrip().split()))
+b = sum(map(int, input().rstrip().split()))
+c = sum(map(int, input().rstrip().split()))
+print(a-b, b-c)

@@ -1,0 +1,16 @@
+#include <bits/stdc++.h>
+using namespace std;
+int main() {
+  string s;
+  cin >> s;
+  if (s.length() == 1)
+    cout << s << endl;
+  else {
+    s.erase(remove(s.begin(), s.end(), '+'), s.end());
+    sort(s.begin(), s.end());
+    for (int i = 0; i < s.length() - 1; i++) {
+      cout << s[i] << '+';
+    }
+    cout << s[s.length() - 1];
+  }
+}

@@ -1,0 +1,5 @@
+# Hello World program in Python
+
+n, a, b, c = [sum(map(int, input().split() ) ) for _ in range(4) ]
+print(a-b, b-c)
+     	 	 	 		 					 			 	  	

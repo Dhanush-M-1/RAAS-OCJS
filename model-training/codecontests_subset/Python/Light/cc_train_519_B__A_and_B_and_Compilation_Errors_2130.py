@@ -1,0 +1,6 @@
+n = input()
+arr1 = sum(map(int, input().split()))
+arr2 = sum(map(int, input().split()))
+arr3 = sum(map(int, input().split()))
+print(arr1-arr2)
+print(arr2-arr3)

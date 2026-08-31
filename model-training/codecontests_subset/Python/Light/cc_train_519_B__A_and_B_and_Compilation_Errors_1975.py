@@ -1,0 +1,7 @@
+R = lambda : map(int, input().split())
+n = int(input())
+a = sum(R())
+b = sum(R())
+c = sum(R())
+print(a - b)
+print( b - c)

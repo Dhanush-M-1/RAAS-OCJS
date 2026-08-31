@@ -1,0 +1,7 @@
+#include <bits/stdc++.h>
+
+int main() {
+  int a, b, c;
+  std::cin >> a >> b >> c;
+  std::cout << (2 * std::max({a, b, c}) == a + b + c ? "Yes\n" : "No\n");
+}

@@ -1,0 +1,11 @@
+i = int(input())
+l = list(map(int,input().split()))
+m = 0
+for x in l:
+    if x > 500000:
+        if m < 1000000- x:
+            m = 1000000- x
+    else:
+        if m < x-1:
+            m = x-1
+print(m)

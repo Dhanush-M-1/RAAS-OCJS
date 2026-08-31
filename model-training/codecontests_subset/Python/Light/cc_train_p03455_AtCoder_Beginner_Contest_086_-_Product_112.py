@@ -1,0 +1,1 @@
+a,b=map(int,input().split());print('EOvdedn'[a%2 and b%2::2])

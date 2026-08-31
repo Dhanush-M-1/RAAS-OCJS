@@ -1,0 +1,7 @@
+error=int(input())
+comp1=list(map(int,input().split()))
+comp2=list(map(int,input().split()))
+comp3=list(map(int,input().split()))
+f_ans=sum(comp1)-sum(comp2)
+s_ans=sum(comp2)-sum(comp3)
+print(f_ans,s_ans,sep=('\n'))

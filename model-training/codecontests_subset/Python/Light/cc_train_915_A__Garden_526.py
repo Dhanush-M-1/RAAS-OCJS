@@ -1,0 +1,1 @@
+a=lambda:map(int,input().split());b,c=a();print(min(c//i for i in sorted(list(a()),reverse=True) if c%i==0))

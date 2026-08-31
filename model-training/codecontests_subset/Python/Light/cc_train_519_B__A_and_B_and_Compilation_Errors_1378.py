@@ -1,0 +1,6 @@
+n = int(input())
+arr = list(map(int,input().split()))
+brr = list(map(int,input().split()))
+crr = list(map(int,input().split()))
+print(sum(arr)-sum(brr))
+print(sum(brr)-sum(crr))

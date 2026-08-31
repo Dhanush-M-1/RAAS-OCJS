@@ -1,0 +1,1 @@
+print("Odd"if all([int(i)%2for i in input().split()])else"Even")

@@ -1,0 +1,1 @@
+print(["Even","Odd"][eval(input().replace(" ", "*"))%2])

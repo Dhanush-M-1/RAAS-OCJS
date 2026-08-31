@@ -1,0 +1,6 @@
+q=int(input())
+w=sum(list(map(int,input().split())))
+e=sum(list(map(int,input().split())))
+r=sum(list(map(int,input().split())))
+print(w-e)
+print(e-r)

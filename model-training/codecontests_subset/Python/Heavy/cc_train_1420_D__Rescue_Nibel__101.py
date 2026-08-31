@@ -1,0 +1,13 @@
+import sys;input = iter(sys.stdin.buffer.read().decode().splitlines()).__next__;MOD = 998244353;n, k = map(int, input().split());a = [tuple(map(int, input().split())) for _ in range(n)];fac = [1] * (n + 1);ifac = [1] * (n + 1)
+for i in range(2, n + 1):fac[i] = fac[i - 1] * i % MOD
+ifac[n] = pow(fac[n], MOD - 2, MOD)
+for i in range(n - 1, 1, -1):ifac[i] = ifac[i + 1] * (i + 1) % MOD
+comb = lambda n, k: fac[n] * ifac[k] % MOD * ifac[n - k] % MOD if 0 <= k <= n else 0
+e = sorted([s * 2 + 1 for s, _ in a] + [(e + 1) * 2 for _, e in a]);cur = ways = 0
+for t in e:
+    t %= 2
+    if t == 0:cur -= 1
+    else:
+        if cur >= k - 1:ways += comb(cur, k - 1)
+        cur += 1
+print(ways % MOD)  

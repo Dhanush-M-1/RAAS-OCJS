@@ -1,0 +1,8 @@
+a=input()
+b=list(map(int,input().split()))
+c=list(map(int,input().split()))
+d=list(map(int,input().split()))
+f=sum(b)-sum(c)
+g=sum(c)-sum(d)
+print(f)
+print(g)

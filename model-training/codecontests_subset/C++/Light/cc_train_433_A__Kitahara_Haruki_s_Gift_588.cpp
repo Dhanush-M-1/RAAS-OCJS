@@ -1,0 +1,14 @@
+#include <bits/stdc++.h>
+int main() {
+  int n, w, one = 0, two = 0;
+  scanf("%d", &n);
+  while (n--) {
+    scanf("%d", &w);
+    (w == 100 ? one : two)++;
+  }
+  if (!(one & 1) && (!(two & 1) || (two & 1 && one)))
+    printf("YES\n");
+  else
+    printf("NO\n");
+  return 0;
+}

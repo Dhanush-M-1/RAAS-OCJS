@@ -1,0 +1,1 @@
+x,y,z=sorted(map(int,input().split()));print(['No','Yes'][x+y==z])

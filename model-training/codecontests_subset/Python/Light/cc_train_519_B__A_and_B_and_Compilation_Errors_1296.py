@@ -1,0 +1,6 @@
+l=int(input())
+lineone=sum(sorted(map(int,input().split(" "))))
+linetwo=sum(sorted(map(int,input().split(" "))))
+linethree=sum(sorted(map(int,input().split(" "))))
+print(lineone-linetwo)
+print(linetwo-linethree)

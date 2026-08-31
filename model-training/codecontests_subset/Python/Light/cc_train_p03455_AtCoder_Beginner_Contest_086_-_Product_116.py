@@ -1,0 +1,1 @@
+s=input();print('OEdvde n'['0'in s or'4'in s::2])

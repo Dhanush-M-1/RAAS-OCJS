@@ -1,0 +1,7 @@
+#include <iostream>
+using namespace std;
+int main()
+{
+	long a, b; cin>>a>>b;
+	cout<<"Even\0Odd"+5*(a*b%2)<<endl;
+}

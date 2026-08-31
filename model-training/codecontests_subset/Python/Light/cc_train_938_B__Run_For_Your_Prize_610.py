@@ -1,0 +1,9 @@
+n=(int)(input())
+l=list(map(int, input().split()))
+# s=input()
+a=0
+for i in range(n):
+    ans=(min((abs(1-l[i])),(abs(1000000-l[i]))))
+    if ans>a:
+        a=ans
+print(a)

@@ -1,0 +1,1 @@
+from fractions import*;exec("a,b,c,d=map(int,input().split());g=gcd(b,d);print('YNeos'[b>min(a,d)or b-g+a%g>c::2]);"*int(input()))

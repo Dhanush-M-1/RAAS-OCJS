@@ -1,0 +1,2 @@
+#include<bits/stdc++.h>
+using namespace std;int n,q,X,A,i,j,s,t;int main(){cin>>n;for(i=0;i<n;i++){s=0;cin>>q;X=q;while(X>9){A=0;for(j=1;j<10;j++){t=pow(10.0,j);if(q/t<1){break;}A=max((X/t)*(X%t),A);}s++;if(s>=1000){s=-1;break;}X=A;}cout<<s<<endl;}}

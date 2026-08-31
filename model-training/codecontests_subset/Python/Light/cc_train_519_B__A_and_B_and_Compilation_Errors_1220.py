@@ -1,0 +1,6 @@
+n=int(input())
+line1=list(map(int,input().split()))
+line2=list(map(int,input().split()))
+line3=list(map(int,input().split()))
+print(sum(line1)-sum(line2))
+print(sum(line2)-sum(line3))

@@ -1,0 +1,1 @@
+import java.util.*;class Main{public static void main(String[]z){Scanner s=new Scanner(System.in);String y="%02d:%02d:%02d\n";for(int i,n,t=3600,r;(n=2-s.nextInt())<3;)for(r=t*n-s.nextInt()*60-s.nextInt(),i=0;i++<2;r*=3)System.out.printf(y,r/t,r%t/60,r%60);}}

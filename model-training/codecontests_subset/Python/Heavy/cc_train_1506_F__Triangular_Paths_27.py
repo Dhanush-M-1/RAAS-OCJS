@@ -1,0 +1,30 @@
+
+for _ in range(int(input())):
+  n=int(input())
+  r=[int(x) for x in input().split()]
+  
+  c=[int(x) for x in input().split()]
+
+  (sx,sy)=(1,1)
+  cost=0
+  for (dx,dy) in sorted( zip(r,c)):
+    #print(f"   {dx},{dy}")
+    sl=sx-sy
+    dl=dx-dy
+
+    if sl==dl:
+      if sl%2==0:
+        points=dx-sx
+      else:
+         points=0
+    else:
+      sdbl = sl//2
+      ddbl = dl//2
+      if sdbl==ddbl:
+        points=0
+      else:
+        points=ddbl-sdbl
+    #print(f"extra points: {points}")
+    cost+=points
+    (sx,sy)=(dx,dy)
+  print(f"{cost}")

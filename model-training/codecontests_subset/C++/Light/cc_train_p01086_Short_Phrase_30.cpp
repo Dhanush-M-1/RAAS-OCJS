@@ -1,0 +1,2 @@
+#include<bits/stdc++.h>
+int main(){for(char s[50],i,j,p,q;p=atoi(gets(s));printf("%d\n",i)){for(i=0;i<p;s[i++]=strlen(gets(s+i)));for(i=j=0;j<7;)for(p=i++,j=q=1;q>0;)for(q=j++>5?0:j-2&&j-4?8:6;q>1;q-=s[p++]);}}

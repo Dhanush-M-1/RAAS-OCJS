@@ -1,0 +1,1 @@
+print((lambda x:"Yes" if max(x)*2==sum(x) else "No")(list(map(int,input().split()))))

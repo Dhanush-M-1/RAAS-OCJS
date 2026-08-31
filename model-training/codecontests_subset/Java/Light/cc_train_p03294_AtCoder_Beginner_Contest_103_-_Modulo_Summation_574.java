@@ -1,0 +1,1 @@
+import java.util.stream.*;import java.util.*;public class Main{public static void main(String[]a){Scanner s=new Scanner(System.in);System.out.println(IntStream.range(0,s.nextInt()).map(i->s.nextInt()-1).sum());}}

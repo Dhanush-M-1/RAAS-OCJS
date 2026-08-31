@@ -1,0 +1,6 @@
+input()
+fcerrors = sum(list(map(int, input().split())))
+scerrors = sum(list(map(int, input().split())))
+tcerrors = sum(list(map(int, input().split())))
+print(fcerrors - scerrors)
+print(scerrors - tcerrors)

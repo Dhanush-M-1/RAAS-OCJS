@@ -1,0 +1,6 @@
+n=int(input())
+l=list(map(int,input().split()))
+sec=list(map(int,input().split()))
+third=list(map(int,input().split()))
+print(sum(l)-sum(sec))
+print(sum(sec)-sum(third))

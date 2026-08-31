@@ -1,0 +1,6 @@
+input()
+s = sum(list(map(int,input().split())))
+s1 = sum(list(map(int,input().split())))
+print(s-s1)
+s = sum(list(map(int,input().split())))
+print (s1-s)

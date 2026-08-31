@@ -1,0 +1,6 @@
+n=map(int,input().split())
+a=(list(map(int,input().split())))
+a1 =sorted( list(map(int, input().split())))
+a2= sorted(list(map(int, input().split())))
+print(sum(a)-sum(a1))
+print(sum(a1)-sum(a2))

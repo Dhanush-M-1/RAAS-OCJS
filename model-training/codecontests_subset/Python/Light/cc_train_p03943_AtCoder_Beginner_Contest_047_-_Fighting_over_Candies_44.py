@@ -1,0 +1,1 @@
+a,b,c=map(int,input().split());print(['No','Yes'][max(a,b,c)==((a+b+c)-max(a,b,c))])

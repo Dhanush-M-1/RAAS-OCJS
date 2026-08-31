@@ -1,0 +1,5 @@
+input()
+s = lambda: sum(map(int, input().split()))
+a, b, c = s(), s(), s()
+print(a - b)
+print(b - c)

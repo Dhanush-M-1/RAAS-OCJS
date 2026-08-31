@@ -1,0 +1,6 @@
+str_1=int(input())
+str_2=sum(list( map(int,input().split())))
+str_3=sum(list( map(int,input().split())))
+str_4=sum(list( map(int,input().split())))
+print(str_2-str_3)
+print(str_3-str_4)

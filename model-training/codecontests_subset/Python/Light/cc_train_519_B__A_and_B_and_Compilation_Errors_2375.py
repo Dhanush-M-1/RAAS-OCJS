@@ -1,0 +1,5 @@
+input()
+first_compile = sum(map(int, input().split()))
+second_compile = sum(map(int, input().split()))
+third_compile = sum(map(int, input().split()))
+print(first_compile - second_compile, second_compile - third_compile)
