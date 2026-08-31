@@ -9,17 +9,28 @@ use policy::TierPolicy;
 use queue::{start, submit};
 
 async fn judge(submission: Submission, policy: &(dyn TierPolicy + Send + Sync)) -> JudgeResult {
+    let tier = policy.initial_tier(&submission).name().to_string();
+    let start = std::time::Instant::now();
+    let cases = docker::run_submission(&submission).await;
+    let wall_ms = start.elapsed().as_millis() as u64;
+    let cpu_ms = cases.iter().map(|c| c.cpu_time_ms).sum();
+    let mem = cases.iter().map(|c| c.peak_memory_bytes).max().unwrap_or(0);
+    let verdict = cases
+        .iter()
+        .find(|c| c.verdict != "AC")
+        .map(|c| c.verdict.as_str())
+        .unwrap_or("AC");
     JudgeResult {
-        submission_id: submission.id,
+        submission_id: submission.id.clone(),
         approach: policy.name().to_string(),
-        verdict: "AC".to_string(),
-        cpu_time_ms: 0,
-        peak_memory_bytes: 0,
-        wall_time_ms: 0,
-        tier_started: "high".to_string(),
+        verdict: verdict.to_string(),
+        cpu_time_ms: cpu_ms,
+        peak_memory_bytes: mem,
+        wall_time_ms: wall_ms,
+        tier_started: tier,
         tier_promoted: false,
         promotion_time_ms: 0,
-        cases: vec![],
+        cases: cases,
     }
 }
 

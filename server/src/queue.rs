@@ -47,11 +47,12 @@ pub async fn submit(
     Json(submission): Json<Submission>,
 ) -> Json<JudgeResult> {
     let submission_id = submission.id.clone();
-    eprintln!("[SUBMIT] Received request for {}", submission_id);
+    let approach = submission.approach.clone();
+    eprintln!("[SUBMIT] Received request for {} (approach: {})", submission_id, approach);
     let (resp_tx, resp_rx) = oneshot::channel();
     let job = Job {
         submission,
-        approach: "baseline".to_string(),
+        approach,
         respond_to: resp_tx,
     };
     tx.send(job).await.expect("dispatcher failed");

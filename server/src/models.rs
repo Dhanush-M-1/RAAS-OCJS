@@ -1,3 +1,4 @@
+use crate::policy::Tier;
 use crate::policy::TierPolicy;
 use serde::{Deserialize, Serialize};
 
@@ -7,6 +8,7 @@ pub struct Submission {
     pub language: String,
     pub source: String,
     pub test_cases: Vec<TestCase>,
+    pub approach: String,
 }
 
 #[derive(Serialize)]
@@ -25,13 +27,13 @@ pub struct JudgeResult {
 
 #[derive(Deserialize)]
 pub struct TestCase {
-    input: String,
-    expected: String,
+    pub input: String,
+    pub expected: String,
 }
 
 #[derive(Serialize)]
 pub struct CaseResult {
-    verdict: String,
-    cpu_time_ms: u64,
-    peak_memory_bytes: u64,
+    pub verdict: String,
+    pub cpu_time_ms: u64,
+    pub peak_memory_bytes: u64,
 }

@@ -2,9 +2,17 @@ use crate::models::Submission;
 
 pub type BoxedPolicy = Box<dyn TierPolicy + Send + Sync + 'static>;
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
-enum Tier {
+pub enum Tier {
     Low,
     High,
+}
+impl Tier {
+    pub fn name(&self) -> &'static str {
+        match self {
+            Tier::Low => "low",
+            Tier::High => "high",
+        }
+    }
 }
 
 #[derive(Clone, Copy)]
@@ -16,7 +24,7 @@ struct MonitorSignal {
 
 pub trait TierPolicy {
     fn name(&self) -> &str;
-    fn initial_tier(&self, sub: Submission) -> Tier;
+    fn initial_tier(&self, sub: &Submission) -> Tier;
     fn should_promote(&self, signal: &MonitorSignal) -> bool;
 }
 
@@ -25,7 +33,7 @@ impl TierPolicy for BaselinePolicy {
     fn name(&self) -> &str {
         "baseline"
     }
-    fn initial_tier(&self, _sub: Submission) -> Tier {
+    fn initial_tier(&self, _sub: &Submission) -> Tier {
         Tier::High
     }
     fn should_promote(&self, _signal: &MonitorSignal) -> bool {
@@ -38,7 +46,7 @@ impl TierPolicy for PredictivePolicy {
     fn name(&self) -> &str {
         "Predictive"
     }
-    fn initial_tier(&self, sub: Submission) -> Tier {
+    fn initial_tier(&self, sub: &Submission) -> Tier {
         if sub.source.len() > 2000 {
             Tier::High
         } else {
@@ -55,7 +63,7 @@ impl TierPolicy for ReactivePolicy {
     fn name(&self) -> &str {
         "Reactive"
     }
-    fn initial_tier(&self, _sub: Submission) -> Tier {
+    fn initial_tier(&self, _sub: &Submission) -> Tier {
         Tier::Low
     }
     fn should_promote(&self, signal: &MonitorSignal) -> bool {
@@ -68,7 +76,7 @@ impl TierPolicy for HybridPolicy {
     fn name(&self) -> &str {
         "Hybrid"
     }
-    fn initial_tier(&self, sub: Submission) -> Tier {
+    fn initial_tier(&self, sub: &Submission) -> Tier {
         if sub.source.len() > 2000 {
             Tier::High
         } else {
