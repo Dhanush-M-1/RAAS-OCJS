@@ -47,11 +47,7 @@ impl TierPolicy for PredictivePolicy {
         "Predictive"
     }
     fn initial_tier(&self, sub: &Submission) -> Tier {
-        if sub.source.len() > 2000 {
-            Tier::High
-        } else {
-            Tier::Low
-        }
+        super::predict::predict_tier(&sub.source, &sub.language)
     }
     fn should_promote(&self, _signal: &MonitorSignal) -> bool {
         false
